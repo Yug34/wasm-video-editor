@@ -42,34 +42,13 @@ const Editor = () => {
     }
 
     useEffect(() => {
-        ffmpegRef.current.on('log', ({ message }) => {
-            messageRef.current!.innerHTML = message;
-            console.log(message);
-        });
-    }, []);
-
-    useEffect(() => {
-        (async () => {
-            if (video) {
-                const ffmpeg = ffmpegRef.current;
-                await ffmpeg.writeFile('input.webm', video!);
-                // ffmpeg -i inputfile.mkv -vf "select=eq(n\,0)" -q:v 3 output_image.jpg
-                await ffmpeg.exec(['-i', 'input.webm', '-vf', 'select=eq(n\\,0)', "-q:v", "3", "output_image.png"]);
-                const data: FileData = await ffmpeg.readFile('output_image.png');
-                setVideoThumbnail(URL.createObjectURL(
-                    new Blob([data as Uint8Array], { type: 'image/png' })
-                ));
-                await ffmpeg.deleteFile('output_image.png')
-            }
-        })();
-
-        return () => {
-        };
-    }, [video]);
-
-    useEffect(() => {
-        console.log(videoThumbnail)
-    }, [videoThumbnail]);
+        if (video && isLoaded) {
+            ffmpegRef.current.on('log', ({ message }) => {
+                messageRef.current!.innerHTML = message;
+                console.log(message);
+            });
+        }
+    }, [video, isLoaded]);
 
     const transcode = async () => {
         const ffmpeg = ffmpegRef.current;
@@ -102,7 +81,18 @@ const Editor = () => {
                         onChange={async (e: ChangeEvent) => {
                             console.log("Uploaded video");
                             const file = (e.target as HTMLInputElement)!.files![0];
-                            setVideo(await fetchFile(file));
+                            const fileData = await fetchFile(file);
+
+                            const ffmpeg = ffmpegRef.current;
+                            await ffmpeg.writeFile('input.webm', fileData);
+                            await ffmpeg.exec(['-i', 'input.webm', '-vf', 'select=eq(n\\,0)', "-q:v", "3", "output_image.png"]);
+                            const data: FileData = await ffmpeg.readFile('output_image.png');
+                            setVideoThumbnail(URL.createObjectURL(
+                                new Blob([data as Uint8Array], { type: 'image/png' })
+                            ));
+                            await ffmpeg.deleteFile('output_image.png')
+
+                            setVideo(fileData);
                         }}
                     />
                 </>
