@@ -5,6 +5,8 @@ import { StyledButton } from "../App";
 import styled from "styled-components";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 
+// NOTE: order should be trim -> compress -> greyscale/filters
+
 const StyledLabel = styled.label`
   color: white;
   cursor: pointer;
@@ -17,6 +19,13 @@ const StyledLabel = styled.label`
   }
 `;
 
+type VideoFormats = "webm" | "mp4";
+
+type Transformation = {
+    type: "Transcode";
+    to: VideoFormats;
+}
+
 const Editor = () => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const messageRef = useRef<HTMLParagraphElement>(null);
@@ -26,6 +35,8 @@ const Editor = () => {
     const [video, setVideo] = useState<Uint8Array | null>(null);
     const [videoThumbnail, setVideoThumbnail] = useState<string | null>(null);
     const ffmpegRef = useRef(new FFmpeg());
+
+    const [transformations, setTransformations] = useState<Transformation[]>([]);
 
     const load = async () => {
         const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.4/dist/umd';
@@ -41,18 +52,24 @@ const Editor = () => {
         setIsLoaded(true);
     }
 
-    const initialize = async (e: ChangeEvent) => {
-        const file = (e.target as HTMLInputElement)!.files![0];
-        const fileData = await fetchFile(file);
-
+    const getFirstFrameUrl = async (fileData: Uint8Array) => {
         const ffmpeg = ffmpegRef.current;
         await ffmpeg.writeFile('input.webm', fileData);
         await ffmpeg.exec(['-i', 'input.webm', '-vf', 'select=eq(n\\,0)', "-q:v", "3", "output_image.png"]);
         const data: FileData = await ffmpeg.readFile('output_image.png');
-        setVideoThumbnail(URL.createObjectURL(
-            new Blob([data as Uint8Array], { type: 'image/png' })
-        ));
+        const dataUrl = URL.createObjectURL(
+            new Blob([data], { type: 'image/png' })
+        );
         await ffmpeg.deleteFile('output_image.png')
+
+        return dataUrl;
+    }
+
+    const initialize = async (e: ChangeEvent) => {
+        const file = (e.target as HTMLInputElement)!.files![0];
+        const fileData = await fetchFile(file);
+
+        setVideoThumbnail(await getFirstFrameUrl(fileData));
 
         setVideo(fileData);
     }
@@ -83,7 +100,11 @@ const Editor = () => {
         >
             {video && isLoaded ? (
                 <>
-                    {videoThumbnail && <img src={videoThumbnail} alt={"thumbnail"} />}
+                    {videoThumbnail && (
+                        <div style={{border: "1px solid white", borderRadius: "1rem", padding: "1rem", width: "fit-content"}}>
+                            <img src={videoThumbnail} alt={"thumbnail"} />
+                        </div>
+                    )}
                     <video ref={videoRef} controls />
                     <StyledButton onClick={transcode}>Transcode webm to mp4</StyledButton>
                     <p style={{width: "400px"}} ref={messageRef}></p>
