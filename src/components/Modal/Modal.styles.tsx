@@ -47,6 +47,7 @@ export const TransformationsContainer = styled(Flex)`
 `;
 
 export const TransformationOption = styled.div`
+  display: flex;
   background: black;
   padding: 0.75rem 0.5rem;
   cursor: pointer;

@@ -21,9 +21,9 @@ const StyledLabel = styled.label`
   }
 `;
 
-type VideoFormats = "webm" | "mp4";
+export type VideoFormats = "webm" | "mp4";
 
-type Transformation = {
+export type Transformation = {
     type: "Transcode";
     to: VideoFormats;
 }
@@ -87,24 +87,30 @@ const Editor = () => {
         }
     }, [video, isLoaded]);
 
-    const transcodeTo = async (outputFormat: string = "mp4") => {
+    const transcode = async (outputFormat: string = "mp4") => {
         const ffmpeg = ffmpegRef.current;
         await ffmpeg.exec(['-i', 'input.webm', `output.${outputFormat}`]);
         const data: FileData = await ffmpeg.readFile(`output.${outputFormat}`);
         videoRef.current!.src = URL.createObjectURL(new Blob([data], {type: `video/${outputFormat}`}));
     }
 
-    const transcode = async () => {
-        setIsModalOpen(true);
-        const ffmpeg = ffmpegRef.current;
-        await ffmpeg.exec(['-i', 'input.webm', 'output.mp4']);
-        const data: FileData = await ffmpeg.readFile('output.mp4');
-        videoRef.current!.src = URL.createObjectURL(new Blob([data], {type: 'video/mp4'}));
+    const transform = () => {
+        transformations.forEach(transformation => {
+            console.log(transformation);
+            if (transformation.type === "Transcode") {
+                transcode(transformation.to);
+            }
+        });
     }
 
     return (
         <div style={{width: "100%", height: "100%"}}>
-            <Modal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
+            <Modal
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+                transformations={transformations}
+                setTransformations={setTransformations}
+            />
             {video && isLoaded ? (
                 <Flex>
                     <Flex style={{ width: "67%", flexDirection: "column" }}>
@@ -117,7 +123,8 @@ const Editor = () => {
                         <p ref={messageRef}></p>
                     </Flex>
                     <Flex style={{ width: "33%", flexDirection: "column" }}>
-                        <StyledButton onClick={transcode}>Transcode webm to mp4</StyledButton>
+                        <StyledButton onClick={() => setIsModalOpen(true)}>Apply a transformation</StyledButton>
+                        <StyledButton onClick={transform}>Apply all transformations!</StyledButton>
                     </Flex>
                 </Flex>
             ) : (
