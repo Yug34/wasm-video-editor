@@ -1,13 +1,4 @@
-export type Codec = "h264" | "vp8" | "vp9" | "windows" | "mpeg4";
-
-export type CodecInfo = {
-    name: string;
-    compressionRange: {
-        min: number;
-        max: number;
-    };
-    ffmpegLib: string;
-};
+import {Codec, CodecInfo, Format, FormatInfo} from "./types";
 
 export const CODECS: Record<Codec, CodecInfo> = {
     h264: {
@@ -52,14 +43,7 @@ export const CODECS: Record<Codec, CodecInfo> = {
     }
 }
 
-export type Format = "avi" | "mov" | "mp4" | "webm" | "wmv";
-
-export type FormatInfo = {
-    name: string;
-    extension: string;
-    type: string;
-    codecs: Codec[];
-}
+export const CODEC_NAMES = Object.keys(CODECS);
 
 export const FORMATS: Record<Format, FormatInfo> = {
     webm: {
@@ -93,3 +77,5 @@ export const FORMATS: Record<Format, FormatInfo> = {
         codecs: ['h264', 'mpeg4']
     }
 }
+
+export const FORMAT_NAMES = Object.keys(FORMATS);

@@ -1,6 +1,6 @@
 import React, {SetStateAction, useState} from "react";
 import * as Styles from "./Modal.styles";
-import {Transformation} from "../Editor";
+import {Transformation} from "../../types";
 
 type ModalProps = {
     isModalOpen: boolean;
@@ -11,6 +11,7 @@ type ModalProps = {
 
 const Modal = (props: ModalProps) => {
     const { isModalOpen, setIsModalOpen, transformations, setTransformations } = props;
+    const [currentTransformation, setCurrentTransformation] = useState("Convert");
 
     const addTransformation = (transformation: Transformation) => {
         setTransformations(prevTransformations => [...prevTransformations, transformation])
@@ -37,6 +38,7 @@ const Modal = (props: ModalProps) => {
                     <Styles.Line/>
                     <Styles.TransformationOption>Hey</Styles.TransformationOption>
                 </Styles.TransformationsContainer>
+                <Styles.ModalView></Styles.ModalView>
             </Styles.ModalContentContainer>
         </Styles.ModalContainer>
     ) : (

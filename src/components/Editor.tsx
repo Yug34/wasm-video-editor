@@ -6,6 +6,8 @@ import styled from "styled-components";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { Flex } from "./common";
 import Modal from "./Modal";
+import {Format} from "../contants";
+import {Transformation} from "../types";
 
 // NOTE: order should be trim -> compress -> greyscale/filters
 
@@ -20,13 +22,6 @@ const StyledLabel = styled.label`
     background: #333333;
   }
 `;
-
-export type VideoFormats = "webm" | "mp4";
-
-export type Transformation = {
-    type: "Transcode";
-    to: VideoFormats;
-}
 
 const Editor = () => {
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -96,7 +91,6 @@ const Editor = () => {
 
     const transform = () => {
         transformations.forEach(transformation => {
-            console.log(transformation);
             if (transformation.type === "Transcode") {
                 transcode(transformation.to);
             }
