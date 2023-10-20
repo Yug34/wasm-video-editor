@@ -33,6 +33,7 @@ const Editor = () => {
     const ffmpegRef = useRef(new FFmpeg());
 
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const openModal = () => setIsModalOpen(true)
 
     const [transformations, setTransformations] = useState<Transformation[]>([]);
 
@@ -116,7 +117,7 @@ const Editor = () => {
                         <p ref={messageRef}></p>
                     </Flex>
                     <Flex style={{ width: "33%", flexDirection: "column" }}>
-                        <StyledButton onClick={() => setIsModalOpen(true)}>Apply a transformation</StyledButton>
+                        <StyledButton onClick={openModal}>Apply a transformation</StyledButton>
                         <StyledButton onClick={transform}>Apply all transformations!</StyledButton>
                     </Flex>
                 </Flex>

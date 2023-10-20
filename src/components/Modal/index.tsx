@@ -1,6 +1,7 @@
 import React, {SetStateAction, useState} from "react";
 import * as Styles from "./Modal.styles";
 import {Transformation, TransformationTypes} from "../../types";
+import {TRANSFORMATION_NAMES} from "../../contants";
 
 type ModalProps = {
     isModalOpen: boolean;
@@ -28,15 +29,15 @@ const Modal = (props: ModalProps) => {
             }}>
                 <Styles.ModalCloseCTA onClick={closeModal}>Close</Styles.ModalCloseCTA>
                 <Styles.TransformationsContainer>
-                    <Styles.TransformationOption onClick={() => addTransformation({type: "Convert", to: "mp4"})}>
-                        Convert
-                    </Styles.TransformationOption>
-                    <Styles.Line/>
-                    <Styles.TransformationOption>Hey</Styles.TransformationOption>
-                    <Styles.Line/>
-                    <Styles.TransformationOption>Hey</Styles.TransformationOption>
-                    <Styles.Line/>
-                    <Styles.TransformationOption>Hey</Styles.TransformationOption>
+                    {TRANSFORMATION_NAMES.map((transformation, index) => (
+                        <React.Fragment key={transformation}>
+                            <Styles.TransformationOption onClick={() => setCurrentTransformation(transformation)}>
+                                {transformation}
+                            </Styles.TransformationOption>
+                            <Styles.Line/>
+                        </React.Fragment>
+                    ))}
+                    {/*<Styles.TransformationOption onClick={() => addTransformation({type: "Convert", to: "mp4"})}>Convert</Styles.TransformationOption>*/}
                 </Styles.TransformationsContainer>
                 <Styles.ModalView></Styles.ModalView>
             </Styles.ModalContentContainer>

@@ -1,4 +1,4 @@
-import {Codec, CodecInfo, Format, FormatInfo} from "./types";
+import {Codec, CodecInfo, Format, FormatInfo, TransformationTypes} from "./types";
 
 export const CODECS: Record<Codec, CodecInfo> = {
     h264: {
@@ -79,3 +79,5 @@ export const FORMATS: Record<Format, FormatInfo> = {
 }
 
 export const FORMAT_NAMES = Object.keys(FORMATS);
+
+export const TRANSFORMATION_NAMES: TransformationTypes[] = ["Convert", "Greyscale"];
