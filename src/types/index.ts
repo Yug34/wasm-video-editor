@@ -7,7 +7,7 @@ export type FormatInfo = {
     codecs: Codec[];
 }
 
-export type TransformationTypes = "Transcode" | "Greyscale";
+export type TransformationTypes = "Convert" | "Greyscale";
 
 export type Transformation = {
     type: TransformationTypes;

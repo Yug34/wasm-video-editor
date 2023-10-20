@@ -6,8 +6,7 @@ import styled from "styled-components";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { Flex } from "./common";
 import Modal from "./Modal";
-import {Format} from "../contants";
-import {Transformation} from "../types";
+import { Transformation } from "../types";
 
 // NOTE: order should be trim -> compress -> greyscale/filters
 
@@ -91,7 +90,7 @@ const Editor = () => {
 
     const transform = () => {
         transformations.forEach(transformation => {
-            if (transformation.type === "Transcode") {
+            if (transformation.type === "Convert") {
                 transcode(transformation.to);
             }
         });

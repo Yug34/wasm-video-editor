@@ -1,6 +1,6 @@
 import React, {SetStateAction, useState} from "react";
 import * as Styles from "./Modal.styles";
-import {Transformation} from "../../types";
+import {Transformation, TransformationTypes} from "../../types";
 
 type ModalProps = {
     isModalOpen: boolean;
@@ -11,7 +11,7 @@ type ModalProps = {
 
 const Modal = (props: ModalProps) => {
     const { isModalOpen, setIsModalOpen, transformations, setTransformations } = props;
-    const [currentTransformation, setCurrentTransformation] = useState("Convert");
+    const [currentTransformation, setCurrentTransformation] = useState<TransformationTypes>("Convert");
 
     const addTransformation = (transformation: Transformation) => {
         setTransformations(prevTransformations => [...prevTransformations, transformation])
@@ -28,7 +28,7 @@ const Modal = (props: ModalProps) => {
             }}>
                 <Styles.ModalCloseCTA onClick={closeModal}>Close</Styles.ModalCloseCTA>
                 <Styles.TransformationsContainer>
-                    <Styles.TransformationOption onClick={() => addTransformation({type: "Transcode", to: "mp4"})}>
+                    <Styles.TransformationOption onClick={() => addTransformation({type: "Convert", to: "mp4"})}>
                         Convert
                     </Styles.TransformationOption>
                     <Styles.Line/>
