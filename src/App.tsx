@@ -7,19 +7,14 @@ import styled from "styled-components";
 
 const Layout = styled.div`
   display: flex;
-  flex-direction: column;
   height: 100vh;
   width: 100vw;
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  background: black;
-  color: white;
 `;
 
 export const StyledButton = styled.button`
-  background: black;
-  color: white;
   cursor: pointer;
   border: 1px solid white;
   border-radius: 12px;

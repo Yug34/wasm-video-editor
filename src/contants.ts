@@ -51,3 +51,45 @@ export const CODECS: Record<Codec, CodecInfo> = {
         ffmpegLib: "libx264"
     }
 }
+
+export type Format = "avi" | "mov" | "mp4" | "webm" | "wmv";
+
+export type FormatInfo = {
+    name: string;
+    extension: string;
+    type: string;
+    codecs: Codec[];
+}
+
+export const FORMATS: Record<Format, FormatInfo> = {
+    webm: {
+        name: "webm",
+        extension: ".webm",
+        type: "video/webm",
+        codecs: ["vp9", "vp8"]
+    },
+    avi: {
+        name: 'AVI',
+        extension: '.avi',
+        type: 'video/avi',
+        codecs: ["h264", "mpeg4"]
+    },
+    mov: {
+        name: 'MOV',
+        extension: '.mov',
+        type: 'video/mov',
+        codecs: ['h264', 'mpeg4']
+    },
+    wmv: {
+        name: 'WMV',
+        extension: '.wmv',
+        type: 'video/wmv',
+        codecs: ['windows']
+    },
+    mp4: {
+        name: 'MP4',
+        extension: '.mp4',
+        type: 'video/mp4',
+        codecs: ['h264', 'mpeg4']
+    }
+}

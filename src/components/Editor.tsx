@@ -1,9 +1,11 @@
 import { fetchFile, toBlobURL } from '@ffmpeg/util';
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { FileData } from "@ffmpeg/ffmpeg/dist/esm/types";
 import { StyledButton } from "../App";
 import styled from "styled-components";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
+import { Flex } from "./common";
+import Modal from "./Modal";
 
 // NOTE: order should be trim -> compress -> greyscale/filters
 
@@ -35,6 +37,8 @@ const Editor = () => {
     const [video, setVideo] = useState<Uint8Array | null>(null);
     const [videoThumbnail, setVideoThumbnail] = useState<string | null>(null);
     const ffmpegRef = useRef(new FFmpeg());
+
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
     const [transformations, setTransformations] = useState<Transformation[]>([]);
 
@@ -83,7 +87,15 @@ const Editor = () => {
         }
     }, [video, isLoaded]);
 
+    const transcodeTo = async (outputFormat: string = "mp4") => {
+        const ffmpeg = ffmpegRef.current;
+        await ffmpeg.exec(['-i', 'input.webm', `output.${outputFormat}`]);
+        const data: FileData = await ffmpeg.readFile(`output.${outputFormat}`);
+        videoRef.current!.src = URL.createObjectURL(new Blob([data], {type: `video/${outputFormat}`}));
+    }
+
     const transcode = async () => {
+        setIsModalOpen(true);
         const ffmpeg = ffmpegRef.current;
         await ffmpeg.exec(['-i', 'input.webm', 'output.mp4']);
         const data: FileData = await ffmpeg.readFile('output.mp4');
@@ -91,33 +103,32 @@ const Editor = () => {
     }
 
     return (
-        <div
-            style={{
-                display: "flex",
-                flexDirection: "column",
-                rowGap: "1rem"
-            }}
-        >
+        <div style={{width: "100%", height: "100%"}}>
+            <Modal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
             {video && isLoaded ? (
-                <>
-                    {videoThumbnail && (
-                        <div style={{border: "1px solid white", borderRadius: "1rem", padding: "1rem", width: "fit-content"}}>
-                            <img src={videoThumbnail} alt={"thumbnail"} />
-                        </div>
-                    )}
-                    <video ref={videoRef} controls />
-                    <StyledButton onClick={transcode}>Transcode webm to mp4</StyledButton>
-                    <p style={{width: "400px"}} ref={messageRef}></p>
-                </>
+                <Flex>
+                    <Flex style={{ width: "67%", flexDirection: "column" }}>
+                        {videoThumbnail && (
+                            <div style={{border: "1px solid white", borderRadius: "1rem", padding: "1rem", width: "fit-content"}}>
+                                <img src={videoThumbnail} alt={"thumbnail"} />
+                            </div>
+                        )}
+                        <video ref={videoRef} controls />
+                        <p ref={messageRef}></p>
+                    </Flex>
+                    <Flex style={{ width: "33%", flexDirection: "column" }}>
+                        <StyledButton onClick={transcode}>Transcode webm to mp4</StyledButton>
+                    </Flex>
+                </Flex>
             ) : (
-                <>
+                <Flex style={{ justifyContent: "center", alignItems: "center" }}>
                     <StyledLabel htmlFor="file-upload" className="custom-file-upload">{video ? "Loading ffmpeg" : "Upload video"}</StyledLabel>
                     <input
                         style={{display: "none"}} id="file-upload" type="file" ref={fileInputRef}
                         onClick={video ? () => {} : load}
                         onChange={initialize}
                     />
-                </>
+                </Flex>
             )}
         </div>
     );
