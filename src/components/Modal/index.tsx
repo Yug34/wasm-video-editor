@@ -3,6 +3,7 @@ import * as Styles from "./Modal.styles";
 import {Codec, Format, Transformation, TransformationTypes} from "../../types";
 import {CODEC_NAMES, FORMAT_NAMES, FORMATS, TRANSFORMATION_NAMES} from "../../contants";
 import {CodeContainer} from "./Modal.styles";
+import {StyledButton} from "../../App";
 
 type ModalProps = {
     isModalOpen: boolean;
@@ -19,7 +20,6 @@ const Modal = (props: ModalProps) => {
     const [videoConvertCodec, setVideoConvertCodec] = useState<Codec>(FORMATS[videoConvertFormat].codecs[0] as Codec);
 
     useEffect(() => {
-        console.log("Set here!");
         setVideoConvertCodec(FORMATS[videoConvertFormat].codecs[0] as Codec);
     }, [videoConvertFormat]);
 
@@ -50,7 +50,7 @@ const Modal = (props: ModalProps) => {
                 <Styles.ModalView>
                     {currentTransformation === "Convert" && (
                         <>
-                            <div onClick={() => addTransformation({type: "Convert", to: "mp4"})}>
+                            <div>
                                 Convert video from
                                 <Styles.CodeContainer>.{videoFormat}</Styles.CodeContainer>
                                 to:
@@ -71,8 +71,8 @@ const Modal = (props: ModalProps) => {
                                     ))}
                                 </select>
                             </div>
-                            <div>{videoConvertFormat}</div>
-                            <div>{videoConvertCodec}</div>
+
+                            <StyledButton onClick={() => addTransformation({type: "Convert", transcode: {to: videoConvertFormat, codec: videoConvertCodec}})}>Convert</StyledButton>
                         </>
                     )}
                     {currentTransformation === "Greyscale" && <div>Greyscale</div>}

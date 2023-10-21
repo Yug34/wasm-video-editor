@@ -11,7 +11,10 @@ export type TransformationTypes = "Convert" | "Greyscale";
 
 export type Transformation = {
     type: TransformationTypes;
-    to: Format;
+    transcode?: {
+        to: Format;
+        codec: Codec;
+    }
 }
 
 export type Codec = "h264" | "vp8" | "vp9" | "windows" | "mpeg4";

@@ -61,7 +61,7 @@ const Editor = () => {
         const dataUrl = URL.createObjectURL(
             new Blob([data], { type: 'image/png' })
         );
-        await ffmpeg.deleteFile('output_image.png')
+        await ffmpeg.deleteFile('output_image.png');
 
         return dataUrl;
     }
@@ -96,7 +96,7 @@ const Editor = () => {
     const transform = () => {
         transformations.forEach(transformation => {
             if (transformation.type === "Convert") {
-                transcode(transformation.to);
+                transcode(transformation.transcode?.to);
             }
         });
     }
