@@ -1,18 +1,27 @@
-import React, {SetStateAction, useState} from "react";
+import React, {SetStateAction, useEffect, useState} from "react";
 import * as Styles from "./Modal.styles";
-import {Transformation, TransformationTypes} from "../../types";
-import {TRANSFORMATION_NAMES} from "../../contants";
+import {Codec, Format, Transformation, TransformationTypes} from "../../types";
+import {CODEC_NAMES, FORMAT_NAMES, FORMATS, TRANSFORMATION_NAMES} from "../../contants";
+import {CodeContainer} from "./Modal.styles";
 
 type ModalProps = {
     isModalOpen: boolean;
+    videoFormat: Format;
     setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
     transformations: Transformation[];
     setTransformations: React.Dispatch<SetStateAction<Transformation[]>>;
 }
 
 const Modal = (props: ModalProps) => {
-    const { isModalOpen, setIsModalOpen, transformations, setTransformations } = props;
+    const { isModalOpen, setIsModalOpen, transformations, setTransformations, videoFormat } = props;
     const [currentTransformation, setCurrentTransformation] = useState<TransformationTypes>("Convert");
+    const [videoConvertFormat, setVideoConvertFormat] = useState<Format>(FORMAT_NAMES.filter(format => format !== videoFormat)[0] as Format);
+    const [videoConvertCodec, setVideoConvertCodec] = useState<Codec>(FORMATS[videoConvertFormat].codecs[0] as Codec);
+
+    useEffect(() => {
+        console.log("Set here!");
+        setVideoConvertCodec(FORMATS[videoConvertFormat].codecs[0] as Codec);
+    }, [videoConvertFormat]);
 
     const addTransformation = (transformation: Transformation) => {
         setTransformations(prevTransformations => [...prevTransformations, transformation])
@@ -37,9 +46,37 @@ const Modal = (props: ModalProps) => {
                             <Styles.Line/>
                         </React.Fragment>
                     ))}
-                    {/*<Styles.TransformationOption onClick={() => addTransformation({type: "Convert", to: "mp4"})}>Convert</Styles.TransformationOption>*/}
                 </Styles.TransformationsContainer>
-                <Styles.ModalView></Styles.ModalView>
+                <Styles.ModalView>
+                    {currentTransformation === "Convert" && (
+                        <>
+                            <div onClick={() => addTransformation({type: "Convert", to: "mp4"})}>
+                                Convert video from
+                                <Styles.CodeContainer>.{videoFormat}</Styles.CodeContainer>
+                                to:
+                                <select
+                                    value={videoConvertFormat}
+                                    onChange={e => {setVideoConvertFormat(e.target.value as Format)}}
+                                >
+                                    {FORMAT_NAMES.filter(format => format !== videoFormat).map(format => (
+                                        <option key={format} value={format}>.{format}</option>
+                                    ))}
+                                </select>
+                                <select
+                                    value={videoConvertCodec}
+                                    onChange={e => {setVideoConvertCodec(e.target.value as Codec)}}
+                                >
+                                    {FORMATS[videoConvertFormat].codecs.map(codec => (
+                                        <option key={codec} value={codec}>{codec}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>{videoConvertFormat}</div>
+                            <div>{videoConvertCodec}</div>
+                        </>
+                    )}
+                    {currentTransformation === "Greyscale" && <div>Greyscale</div>}
+                </Styles.ModalView>
             </Styles.ModalContentContainer>
         </Styles.ModalContainer>
     ) : (

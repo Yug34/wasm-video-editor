@@ -43,9 +43,15 @@ export const CODECS: Record<Codec, CodecInfo> = {
     }
 }
 
-export const CODEC_NAMES = Object.keys(CODECS);
+export const CODEC_NAMES: Codec[] = Object.keys(CODECS) as Codec[];
 
 export const FORMATS: Record<Format, FormatInfo> = {
+    mp4: {
+        name: 'MP4',
+        extension: '.mp4',
+        type: 'video/mp4',
+        codecs: ['h264', 'mpeg4']
+    },
     webm: {
         name: "webm",
         extension: ".webm",
@@ -69,15 +75,9 @@ export const FORMATS: Record<Format, FormatInfo> = {
         extension: '.wmv',
         type: 'video/wmv',
         codecs: ['windows']
-    },
-    mp4: {
-        name: 'MP4',
-        extension: '.mp4',
-        type: 'video/mp4',
-        codecs: ['h264', 'mpeg4']
     }
 }
 
-export const FORMAT_NAMES = Object.keys(FORMATS);
+export const FORMAT_NAMES = Object.keys(FORMATS) as Format[];
 
 export const TRANSFORMATION_NAMES: TransformationTypes[] = ["Convert", "Greyscale"];

@@ -6,7 +6,8 @@ import styled from "styled-components";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { Flex } from "./common";
 import Modal from "./Modal";
-import { Transformation } from "../types";
+import {Format, Transformation} from "../types";
+import {FORMAT_NAMES} from "../contants";
 
 // NOTE: order should be trim -> compress -> greyscale/filters
 
@@ -32,6 +33,7 @@ const Editor = () => {
     const [videoThumbnail, setVideoThumbnail] = useState<string | null>(null);
     const ffmpegRef = useRef(new FFmpeg());
 
+    const [videoFormat, setVideoFormat] = useState<Format | null>(null);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const openModal = () => setIsModalOpen(true)
 
@@ -66,10 +68,12 @@ const Editor = () => {
 
     const initialize = async (e: ChangeEvent) => {
         const file = (e.target as HTMLInputElement)!.files![0];
+
+        const format = file.type.split("/")[1] as Format;
+        setVideoFormat(format);
+
         const fileData = await fetchFile(file);
-
         setVideoThumbnail(await getFirstFrameUrl(fileData));
-
         setVideo(fileData);
     }
 
@@ -99,28 +103,31 @@ const Editor = () => {
 
     return (
         <div style={{width: "100%", height: "100%"}}>
-            <Modal
-                isModalOpen={isModalOpen}
-                setIsModalOpen={setIsModalOpen}
-                transformations={transformations}
-                setTransformations={setTransformations}
-            />
             {video && isLoaded ? (
-                <Flex>
-                    <Flex style={{ width: "67%", flexDirection: "column" }}>
-                        {videoThumbnail && (
-                            <div style={{border: "1px solid white", borderRadius: "1rem", padding: "1rem", width: "fit-content"}}>
-                                <img src={videoThumbnail} alt={"thumbnail"} />
-                            </div>
-                        )}
-                        <video ref={videoRef} controls />
-                        <p ref={messageRef}></p>
+                <React.Fragment>
+                    <Modal
+                        videoFormat={videoFormat!}
+                        isModalOpen={isModalOpen}
+                        setIsModalOpen={setIsModalOpen}
+                        transformations={transformations}
+                        setTransformations={setTransformations}
+                    />
+                    <Flex>
+                        <Flex style={{ width: "67%", flexDirection: "column" }}>
+                            {videoThumbnail && (
+                                <div style={{border: "1px solid white", borderRadius: "1rem", padding: "1rem", width: "fit-content"}}>
+                                    <img src={videoThumbnail} alt={"thumbnail"} />
+                                </div>
+                            )}
+                            <video ref={videoRef} controls />
+                            <p ref={messageRef}></p>
+                        </Flex>
+                        <Flex style={{ width: "33%", flexDirection: "column" }}>
+                            <StyledButton onClick={openModal}>Apply a transformation</StyledButton>
+                            <StyledButton onClick={transform}>Apply all transformations!</StyledButton>
+                        </Flex>
                     </Flex>
-                    <Flex style={{ width: "33%", flexDirection: "column" }}>
-                        <StyledButton onClick={openModal}>Apply a transformation</StyledButton>
-                        <StyledButton onClick={transform}>Apply all transformations!</StyledButton>
-                    </Flex>
-                </Flex>
+                </React.Fragment>
             ) : (
                 <Flex style={{ justifyContent: "center", alignItems: "center" }}>
                     <StyledLabel htmlFor="file-upload" className="custom-file-upload">{video ? "Loading ffmpeg" : "Upload video"}</StyledLabel>

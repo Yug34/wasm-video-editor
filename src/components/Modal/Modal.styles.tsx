@@ -29,6 +29,14 @@ export const ModalContentContainer = styled(Flex)`
 export const ModalView = styled(Flex)`
   flex-direction: column;
   width: auto;
+  padding: 4rem 2rem;
+`;
+
+export const CodeContainer = styled.code`
+	border: 1px solid #999999;
+	border-radius: 12px;
+	padding: 4px 12px;
+    margin: 0 8px;
 `;
 
 export const ModalCloseCTA = styled.button`
