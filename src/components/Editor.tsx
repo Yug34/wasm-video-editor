@@ -6,10 +6,15 @@ import styled from "styled-components";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { Flex } from "./common";
 import Modal from "./Modal";
-import {Format, Transformation} from "../types";
-import {FORMAT_NAMES} from "../contants";
+import { Codec, Format, Transformation } from "../types";
+import { CODECS } from "../contants";
 
-// NOTE: order should be trim -> compress -> greyscale/filters
+// NOTE: order should be trim -> compress -> greyscale/filters -> whatever (and then finally convert
+
+// p 2 p -> handled
+// p 2 u -> todo
+// u 2 p -> handled
+// u 2 u -> todo
 
 const StyledLabel = styled.label`
   color: white;
@@ -20,6 +25,27 @@ const StyledLabel = styled.label`
 
   &:hover {
     background: #333333;
+  }
+`;
+
+type VideoOverlayProps = {
+    $isUnplayable: boolean;
+}
+
+const VideoOverlay = styled.div<VideoOverlayProps>`
+  width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  
+  &:before {
+    content: ${(props) => props.$isUnplayable ? "Not playable" : ""};
+    position: absolute;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 5px;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
   }
 `;
 
@@ -35,6 +61,8 @@ const Editor = () => {
 
     const [videoFormat, setVideoFormat] = useState<Format | null>(null);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+    const [isUnplayable, setIsUnplayable] = useState<boolean>(false);
     const openModal = () => setIsModalOpen(true)
 
     const [transformations, setTransformations] = useState<Transformation[]>([]);
@@ -53,19 +81,6 @@ const Editor = () => {
         setIsLoaded(true);
     }
 
-    const getFirstFrameUrl = async (fileData: Uint8Array) => {
-        const ffmpeg = ffmpegRef.current;
-        await ffmpeg.writeFile('input.webm', fileData);
-        await ffmpeg.exec(['-i', 'input.webm', '-vf', 'select=eq(n\\,0)', "-q:v", "3", "output_image.png"]);
-        const data: FileData = await ffmpeg.readFile('output_image.png');
-        const dataUrl = URL.createObjectURL(
-            new Blob([data], { type: 'image/png' })
-        );
-        await ffmpeg.deleteFile('output_image.png');
-
-        return dataUrl;
-    }
-
     const initialize = async (e: ChangeEvent) => {
         const file = (e.target as HTMLInputElement)!.files![0];
 
@@ -73,7 +88,17 @@ const Editor = () => {
         setVideoFormat(format);
 
         const fileData = await fetchFile(file);
-        setVideoThumbnail(await getFirstFrameUrl(fileData));
+
+        const ffmpeg = ffmpegRef.current;
+        await ffmpeg.writeFile(`input.${format}`, fileData);
+        await ffmpeg.exec(['-i', `input.${format}`, '-vf', 'select=eq(n\\,0)', "-q:v", "3", "output_image.png"]);
+        const data: FileData = await ffmpeg.readFile('output_image.png');
+        const dataUrl = URL.createObjectURL(
+            new Blob([data], { type: 'image/png' })
+        );
+        setVideoThumbnail(dataUrl);
+        await ffmpeg.deleteFile('output_image.png');
+
         setVideo(fileData);
     }
 
@@ -86,23 +111,42 @@ const Editor = () => {
         }
     }, [video, isLoaded]);
 
-    const transcode = async (outputFormat: string = "mp4") => {
+    const transcode = async (toFormat: Format, toCodec: Codec) => {
         const ffmpeg = ffmpegRef.current;
-        await ffmpeg.exec(['-i', 'input.webm', `output.${outputFormat}`]);
-        const data: FileData = await ffmpeg.readFile(`output.${outputFormat}`);
-        videoRef.current!.src = URL.createObjectURL(new Blob([data], {type: `video/${outputFormat}`}));
+        await ffmpeg.exec(['-i', `input.${videoFormat}`, '-threads', '4', '-strict', '-2', '-c:v', `${CODECS[toCodec].ffmpegLib}`, `output.${toFormat}`]);
+
+        if (toFormat === "wmv" || toFormat === "avi") {
+            setIsUnplayable(true);
+        } else {
+            setIsUnplayable(false);
+        }
+
+        const data: FileData = await ffmpeg.readFile(`output.${toFormat}`);
+        videoRef.current!.src = URL.createObjectURL(new Blob([data], {type: `video/${toFormat}`}));
     }
 
     const transform = () => {
+        console.log(transformations);
+
         transformations.forEach(transformation => {
             if (transformation.type === "Convert") {
-                transcode(transformation.transcode?.to);
+                transcode(transformation.transcode?.to!, transformation.transcode?.codec!);
             }
         });
     }
 
+    const VideoPlayer = ({isUnplayable}: {isUnplayable: boolean}) => {
+        return (
+            <VideoOverlay $isUnplayable={isUnplayable}>
+                <video style={{ width: "100%", display: "block" }} ref={videoRef} controls />
+                {isUnplayable && <div>Unplayable</div>}
+            </VideoOverlay>
+        )
+    }
+
     return (
         <div style={{width: "100%", height: "100%"}}>
+            {/*<video src={require("../videos/bunnywmv.wmv")} autoPlay={true} controls={true}/>*/}
             {video && isLoaded ? (
                 <React.Fragment>
                     <Modal
@@ -119,7 +163,7 @@ const Editor = () => {
                                     <img src={videoThumbnail} alt={"thumbnail"} />
                                 </div>
                             )}
-                            <video ref={videoRef} controls />
+                            <VideoPlayer isUnplayable={isUnplayable} />
                             <p ref={messageRef}></p>
                         </Flex>
                         <Flex style={{ width: "33%", flexDirection: "column" }}>
