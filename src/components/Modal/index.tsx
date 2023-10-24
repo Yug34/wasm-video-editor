@@ -31,6 +31,45 @@ const Modal = (props: ModalProps) => {
         setIsModalOpen(false);
     };
 
+    const getModalViews = (transformationType: TransformationTypes) => {
+        switch (transformationType) {
+            case "Convert":
+                return (
+                    <>
+                        <div>
+                            Convert video from
+                            <Styles.CodeContainer>.{videoFormat}</Styles.CodeContainer>
+                            to:
+                            <select
+                                value={videoConvertFormat}
+                                onChange={e => {setVideoConvertFormat(e.target.value as Format)}}
+                            >
+                                {FORMAT_NAMES.filter(format => format !== videoFormat).map(format => (
+                                    <option key={format} value={format}>.{format}</option>
+                                ))}
+                            </select>
+                            <select
+                                value={videoConvertCodec}
+                                onChange={e => {setVideoConvertCodec(e.target.value as Codec)}}
+                            >
+                                {FORMATS[videoConvertFormat].codecs.map(codec => (
+                                    <option key={codec} value={codec}>{codec}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <StyledButton onClick={() => addTransformation({type: "Convert", transcode: {to: videoConvertFormat, codec: videoConvertCodec}})}>Convert</StyledButton>
+                    </>
+                );
+            case "Greyscale":
+                return (
+                    <>
+                        <StyledButton onClick={() => addTransformation({type: "Greyscale"})}>Add Greyscale</StyledButton>
+                    </>
+                );
+        }
+    };
+
     return isModalOpen ? (
         <Styles.ModalContainer onClick={closeModal}>
             <Styles.ModalContentContainer onClick={(e) => {
@@ -47,36 +86,7 @@ const Modal = (props: ModalProps) => {
                         </React.Fragment>
                     ))}
                 </Styles.TransformationsContainer>
-                <Styles.ModalView>
-                    {currentTransformation === "Convert" && (
-                        <>
-                            <div>
-                                Convert video from
-                                <Styles.CodeContainer>.{videoFormat}</Styles.CodeContainer>
-                                to:
-                                <select
-                                    value={videoConvertFormat}
-                                    onChange={e => {setVideoConvertFormat(e.target.value as Format)}}
-                                >
-                                    {FORMAT_NAMES.filter(format => format !== videoFormat).map(format => (
-                                        <option key={format} value={format}>.{format}</option>
-                                    ))}
-                                </select>
-                                <select
-                                    value={videoConvertCodec}
-                                    onChange={e => {setVideoConvertCodec(e.target.value as Codec)}}
-                                >
-                                    {FORMATS[videoConvertFormat].codecs.map(codec => (
-                                        <option key={codec} value={codec}>{codec}</option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <StyledButton onClick={() => addTransformation({type: "Convert", transcode: {to: videoConvertFormat, codec: videoConvertCodec}})}>Convert</StyledButton>
-                        </>
-                    )}
-                    {currentTransformation === "Greyscale" && <div>Greyscale</div>}
-                </Styles.ModalView>
+                <Styles.ModalView>{getModalViews(currentTransformation)}</Styles.ModalView>
             </Styles.ModalContentContainer>
         </Styles.ModalContainer>
     ) : (

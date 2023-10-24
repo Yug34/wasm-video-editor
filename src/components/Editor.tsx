@@ -9,6 +9,8 @@ import Modal from "./Modal";
 import { Codec, Format, Transformation } from "../types";
 import { CODECS } from "../contants";
 
+// TODO: Maybe just process everything as MP4, then convert back to original/other formats
+
 // NOTE: order should be trim -> compress -> greyscale/filters -> whatever (and then finally convert
 
 // p 2 p -> handled
@@ -28,25 +30,10 @@ const StyledLabel = styled.label`
   }
 `;
 
-type VideoOverlayProps = {
-    $isUnplayable: boolean;
-}
-
-const VideoOverlay = styled.div<VideoOverlayProps>`
+const VideoOverlay = styled.div`
   width: 500px;
   margin: 0 auto;
   padding: 20px;
-  
-  &:before {
-    content: ${(props) => props.$isUnplayable ? "Not playable" : ""};
-    position: absolute;
-    background: rgba(255, 255, 255, 1);
-    border-radius: 5px;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-  }
 `;
 
 const Editor = () => {
@@ -125,24 +112,38 @@ const Editor = () => {
         videoRef.current!.src = URL.createObjectURL(new Blob([data], {type: `video/${toFormat}`}));
     }
 
+    const grayscale = async () => {
+        const ffmpeg = ffmpegRef.current;
+        console.log(await ffmpeg.listDir("."));
+        await ffmpeg.exec(['-i', `input.${videoFormat}`, '-vf', 'format=gray', `output.${videoFormat}`]);
+        const data: FileData = await ffmpeg.readFile(`output.${videoFormat}`);
+        videoRef.current!.src = URL.createObjectURL(new Blob([data], {type: `video/${videoFormat}`}));
+        console.log(await ffmpeg.listDir("."));
+    }
+
     const transform = () => {
         console.log(transformations);
 
         transformations.forEach(transformation => {
-            if (transformation.type === "Convert") {
-                transcode(transformation.transcode?.to!, transformation.transcode?.codec!);
+            switch (transformation.type) {
+                case "Convert":
+                    transcode(transformation.transcode?.to!, transformation.transcode?.codec!);
+                    break;
+                case "Greyscale":
+                    grayscale();
+                    break;
             }
         });
     }
 
     const VideoPlayer = ({isUnplayable}: {isUnplayable: boolean}) => {
         return (
-            <VideoOverlay $isUnplayable={isUnplayable}>
+            <VideoOverlay>
                 <video style={{ width: "100%", display: "block" }} ref={videoRef} controls />
                 {isUnplayable && <div>Unplayable</div>}
             </VideoOverlay>
-        )
-    }
+        );
+    };
 
     return (
         <div style={{width: "100%", height: "100%"}}>
