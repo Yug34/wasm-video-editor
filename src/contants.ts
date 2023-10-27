@@ -80,4 +80,4 @@ export const FORMATS: Record<Format, FormatInfo> = {
 
 export const FORMAT_NAMES = Object.keys(FORMATS) as Format[];
 
-export const TRANSFORMATION_NAMES: TransformationTypes[] = ["Convert", "Greyscale"];
+export const TRANSFORMATION_NAMES: TransformationTypes[] = ["Convert", "Greyscale", "Trim"];

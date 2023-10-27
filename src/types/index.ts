@@ -7,13 +7,17 @@ export type FormatInfo = {
     codecs: Codec[];
 }
 
-export type TransformationTypes = "Convert" | "Greyscale";
+export type TransformationTypes = "Convert" | "Greyscale" | "Trim";
 
 export type Transformation = {
     type: TransformationTypes;
     transcode?: {
         to: Format;
         codec: Codec;
+    }
+    trim?: {
+        from: string;
+        to: string;
     }
 }
 

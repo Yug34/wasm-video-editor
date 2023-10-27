@@ -100,7 +100,7 @@ const Editor = () => {
 
     const transcode = async (toFormat: Format, toCodec: Codec) => {
         const ffmpeg = ffmpegRef.current;
-        await ffmpeg.exec(['-i', `input.${videoFormat}`, '-threads', '4', '-strict', '-2', '-c:v', `${CODECS[toCodec].ffmpegLib}`, `output.${toFormat}`]);
+        await ffmpeg.exec(['-i', `input.${videoFormat}`, '-threads', '4', '-strict', '-2', '-c:v', `${CODECS[toCodec].ffmpegLib}`, `input.${toFormat}`]);
 
         if (toFormat === "wmv" || toFormat === "avi") {
             setIsUnplayable(true);
@@ -108,32 +108,47 @@ const Editor = () => {
             setIsUnplayable(false);
         }
 
-        const data: FileData = await ffmpeg.readFile(`output.${toFormat}`);
-        videoRef.current!.src = URL.createObjectURL(new Blob([data], {type: `video/${toFormat}`}));
+        await ffmpeg.deleteFile(`input.${videoFormat}`);
+        setVideoFormat(toFormat);
     }
 
-    const grayscale = async () => {
+    const grayscale = async (format: Format) => {
         const ffmpeg = ffmpegRef.current;
-        console.log(await ffmpeg.listDir("."));
-        await ffmpeg.exec(['-i', `input.${videoFormat}`, '-vf', 'format=gray', `output.${videoFormat}`]);
-        const data: FileData = await ffmpeg.readFile(`output.${videoFormat}`);
-        videoRef.current!.src = URL.createObjectURL(new Blob([data], {type: `video/${videoFormat}`}));
-        console.log(await ffmpeg.listDir("."));
+        await ffmpeg.exec(['-i', `input.${format}`, '-vf', 'format=gray', `output.${format}`]);
+        await ffmpeg.deleteFile(`input.${format}`);
+        await ffmpeg.rename(`output.${format}`, `input.${format}`);
     }
 
-    const transform = () => {
-        console.log(transformations);
+    const trim = async (format: Format) => {
+        const ffmpeg = ffmpegRef.current;
+        await ffmpeg.exec(["-ss", "00:00:05", "-i", `input.${format}`, "-ss", "00:00:10", "-t", "00:00:20", "-c", "copy", `output.${videoFormat}`] )
+        await ffmpeg.deleteFile(`input.${format}`);
+        await ffmpeg.rename(`output.${format}`, `input.${format}`);
+    }
+
+    const transform = async () => {
+        const transcodeSteps = transformations.filter((transformation) => transformation.type === "Convert");
+        const hasTranscode = transcodeSteps.length > 0;
+
+        const format = hasTranscode ? transcodeSteps[0].transcode!.to : videoFormat;
 
         transformations.forEach(transformation => {
             switch (transformation.type) {
                 case "Convert":
-                    transcode(transformation.transcode?.to!, transformation.transcode?.codec!);
+                    transcode(transformation.transcode!.to, transformation.transcode!.codec);
                     break;
                 case "Greyscale":
-                    grayscale();
+                    grayscale(format!);
+                    break;
+                case "Trim":
+                    trim(format!);
                     break;
             }
         });
+
+        const ffmpeg = ffmpegRef.current;
+        const data: FileData = await ffmpeg.readFile(`input.${format}`);
+        videoRef.current!.src = URL.createObjectURL(new Blob([data], {type: `video/${format}`}));
     }
 
     const VideoPlayer = ({isUnplayable}: {isUnplayable: boolean}) => {

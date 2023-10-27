@@ -1,8 +1,7 @@
 import React, {SetStateAction, useEffect, useState} from "react";
 import * as Styles from "./Modal.styles";
 import {Codec, Format, Transformation, TransformationTypes} from "../../types";
-import {CODEC_NAMES, FORMAT_NAMES, FORMATS, TRANSFORMATION_NAMES} from "../../contants";
-import {CodeContainer} from "./Modal.styles";
+import {FORMAT_NAMES, FORMATS, TRANSFORMATION_NAMES} from "../../contants";
 import {StyledButton} from "../../App";
 
 type ModalProps = {
@@ -67,6 +66,12 @@ const Modal = (props: ModalProps) => {
                         <StyledButton onClick={() => addTransformation({type: "Greyscale"})}>Add Greyscale</StyledButton>
                     </>
                 );
+            case "Trim":
+                return (
+                    <>
+                        <StyledButton onClick={() => addTransformation({type: "Trim"})}>Trim</StyledButton>
+                    </>
+                )
         }
     };
 
