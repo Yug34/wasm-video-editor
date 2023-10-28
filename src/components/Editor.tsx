@@ -115,14 +115,12 @@ const Editor = () => {
     const grayscale = async (format: Format) => {
         const ffmpeg = ffmpegRef.current;
         await ffmpeg.exec(['-i', `input.${format}`, '-vf', 'format=gray', `output.${format}`]);
-        await ffmpeg.deleteFile(`input.${format}`);
         await ffmpeg.rename(`output.${format}`, `input.${format}`);
     }
 
     const trim = async (format: Format) => {
         const ffmpeg = ffmpegRef.current;
         await ffmpeg.exec(["-ss", "00:00:05", "-i", `input.${format}`, "-ss", "00:00:10", "-t", "00:00:20", "-c", "copy", `output.${videoFormat}`] )
-        await ffmpeg.deleteFile(`input.${format}`);
         await ffmpeg.rename(`output.${format}`, `input.${format}`);
     }
 
@@ -132,23 +130,20 @@ const Editor = () => {
 
         const format = hasTranscode ? transcodeSteps[0].transcode!.to : videoFormat;
 
-        transformations.forEach(transformation => {
+        await Promise.all(transformations.map(async transformation => {
             switch (transformation.type) {
                 case "Convert":
-                    transcode(transformation.transcode!.to, transformation.transcode!.codec);
-                    break;
+                    return await transcode(transformation.transcode!.to, transformation.transcode!.codec);
                 case "Greyscale":
-                    grayscale(format!);
-                    break;
+                    return await grayscale(format!);
                 case "Trim":
-                    trim(format!);
-                    break;
+                    return await trim(format!);
             }
+        })).then(async () => {
+            const ffmpeg = ffmpegRef.current;
+            const data: FileData = await ffmpeg.readFile(`input.${format}`);
+            videoRef.current!.src = URL.createObjectURL(new Blob([data], {type: `video/${format}`}));
         });
-
-        const ffmpeg = ffmpegRef.current;
-        const data: FileData = await ffmpeg.readFile(`input.${format}`);
-        videoRef.current!.src = URL.createObjectURL(new Blob([data], {type: `video/${format}`}));
     }
 
     const VideoPlayer = ({isUnplayable}: {isUnplayable: boolean}) => {
