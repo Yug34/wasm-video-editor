@@ -16,8 +16,8 @@ export type Transformation = {
         codec: Codec;
     }
     trim?: {
-        from: string;
-        to: string;
+        from: VideoDuration;
+        to: VideoDuration;
     }
 }
 
@@ -31,3 +31,9 @@ export type CodecInfo = {
     };
     ffmpegLib: string;
 };
+
+export type VideoDuration = {
+    hours: number;
+    minutes: number;
+    seconds: number;
+}

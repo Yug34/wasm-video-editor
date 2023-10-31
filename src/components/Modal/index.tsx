@@ -1,6 +1,6 @@
 import React, {SetStateAction, useEffect, useRef, useState} from "react";
 import * as Styles from "./Modal.styles";
-import {Codec, Format, Transformation, TransformationTypes} from "../../types";
+import {Codec, Format, Transformation, TransformationTypes, VideoDuration} from "../../types";
 import {FORMAT_NAMES, FORMATS, TRANSFORMATION_NAMES} from "../../contants";
 import {StyledButton} from "../../App";
 import styled from "styled-components";
@@ -8,37 +8,36 @@ import styled from "styled-components";
 const Slider = styled.div`
     width: 400px;
     position: relative;
-    height: 14px;
-    border-radius: 10px;
+    height: 15px;
     text-align: left;
-    margin-bottom: 100px;
+    margin-bottom: 2rem;
 
     & > div {
         position: absolute;
-        left: 13px;
-        right: 15px;
+        left: 0;
+        right: 0;
         height: 14px;
+        border: 1px solid white;
     }
 
     & > div > #inverse-left {
         position: absolute;
         left: 0;
-        height: 14px;
-        background-color: #CCC;
+        height: 13px;
     }
 
     & > div > #inverse-right {
         position: absolute;
         right: 0;
-        height: 14px;
-        background-color: #CCC;
+        top: -1px;
+        height: 13px;
     }
 
     & > div > #range {
         position: absolute;
         left: 0;
         height: 14px;
-        background-color: #1ABC9C;
+        background-color: white;
     }
 
     & > div > .thumb {
@@ -46,13 +45,11 @@ const Slider = styled.div`
         top: -7px;
         z-index: 2;
         height: 28px;
-        width: 28px;
+        width: 10px;
         text-align: left;
         margin-left: -11px;
-        cursor: pointer;
-        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
-        background-color: #FFF;
-        border-radius: 50%;
+        background-color: black;
+        border: 1px solid white;
         outline: none;
     }
 
@@ -137,10 +134,10 @@ const Slider = styled.div`
     & > div > .sign {
         opacity: 0;
         position: absolute;
-        margin-left: -11px;
+        margin-left: -19px;
         top: -39px;
         z-index:3;
-        background-color: #1ABC9C;
+        background-color: black;
         color: #fff;
         width: 28px;
         height: 28px;
@@ -151,24 +148,10 @@ const Slider = styled.div`
         justify-content: center;
         text-align: center;
     }
-      
-    & > div > .sign:after {
-        position: absolute;
-        content: '';
-        left: 0;
-        border-radius: 16px;
-        top: 19px;
-        border-left: 14px solid transparent;
-        border-right: 14px solid transparent;
-        border-top-width: 16px;
-        border-top-style: solid;
-        border-top-color: #1ABC9C;
-    }
-      
+    
     & > div > .sign > span {
-        font-size: 12px;
-        font-weight: 700;
-        line-height: 28px;
+        font-size: 14px;
+        line-height: 24px;
     }
       
     & > div > .sign {
@@ -176,11 +159,24 @@ const Slider = styled.div`
     }
 `;
 
-const InputBar = styled.div`
+const getVideoDurationInSeconds = (videoDuration: VideoDuration): number => {
+    return videoDuration.hours * 3600 + videoDuration.minutes * 60 + videoDuration.seconds
+};
 
-`;
+const getVideoDurationFromSeconds = (timeInSeconds: number): VideoDuration => {
+    const hours = Math.floor(timeInSeconds / 3600);
+    const minutes = Math.floor((timeInSeconds % 3600) / 60);
+    const seconds = timeInSeconds % 60;
+
+    return {
+        hours: hours,
+        minutes: minutes,
+        seconds: seconds
+    };
+};
 
 type ModalProps = {
+    videoDuration: VideoDuration;
     isModalOpen: boolean;
     videoFormat: Format;
     setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -189,7 +185,7 @@ type ModalProps = {
 }
 
 const Modal = (props: ModalProps) => {
-    const { isModalOpen, setIsModalOpen, transformations, setTransformations, videoFormat } = props;
+    const { videoDuration, isModalOpen, setIsModalOpen, transformations, setTransformations, videoFormat } = props;
     const [currentTransformation, setCurrentTransformation] = useState<TransformationTypes>("Convert");
     const [videoConvertFormat, setVideoConvertFormat] = useState<Format>(FORMAT_NAMES.filter(format => format !== videoFormat)[0] as Format);
     const [videoConvertCodec, setVideoConvertCodec] = useState<Codec>(FORMATS[videoConvertFormat].codecs[0] as Codec);
@@ -251,10 +247,10 @@ const Modal = (props: ModalProps) => {
                 return (
                     <div style={{width: "100%"}}>
                         <Slider>
-                            <InputBar>
+                            <div>
                                 <div id="inverse-left" style={{width: `${trimFromPercent}%`}}/>
-                                <div id="inverse-right" style={{width: `${100 - trimToPercent}%`}}/>
-                                <div id="range" style={{left: `${trimFromPercent}%`, right: `${100 - trimToPercent}%`}}/>
+                                <div id="inverse-right" style={{width: `${100 - trimToPercent + 1}%`}}/>
+                                <div id="range" style={{left: `${trimFromPercent - 1}%`, right: `${100 - trimToPercent + 1}%`}}/>
                                 <span className="thumb" style={{left: `${trimFromPercent}%`}}/>
                                 <span className="thumb" style={{left: `${trimToPercent}%`}}/>
                                 <div className="sign" style={{left: `${trimFromPercent}%`}}>
@@ -263,11 +259,15 @@ const Modal = (props: ModalProps) => {
                                 <div className="sign" style={{left: `${trimToPercent}%`}}>
                                     <span id="value">{trimToPercent}</span>
                                 </div>
-                            </InputBar>
+                            </div>
                             <input ref={inputRefFrom} type="range" value={trimFromPercent} max="100" min="0" step="1"
                                 onChange={(e) => {
                                     const inputValue = parseInt(e.target.value);
                                     const value = Math.min(inputValue, trimToPercent - 1);
+                                    // const videoLengthInSeconds = getVideoDurationInSeconds(videoDuration);
+                                    // const fromSecond = (value/100) * videoLengthInSeconds;
+                                    // const fromTimeStamp = getVideoDurationFromSeconds(fromSecond);
+
                                     setTrimFromPercent(value)
                                 }}
                             />
@@ -276,23 +276,32 @@ const Modal = (props: ModalProps) => {
                                 onChange={(e) => {
                                     const inputValue = parseInt(e.target.value)
                                     const value = Math.max(inputValue, trimFromPercent + 1);
+                                    // const videoLengthInSeconds = getVideoDurationInSeconds(videoDuration);
+                                    // const toSecond = (value/100) * videoLengthInSeconds;
+                                    // const toTimeStamp = getVideoDurationFromSeconds(toSecond);
+
                                     setTrimToPercent(value)
                                 }}
                             />
                         </Slider>
 
-                        {/* 
-                            // oninput="
-                            //     this.value=Math.max(this.value,this.parentNode.childNodes[3].value-(-1));
-                            //     var value=(100/(parseInt(this.max)-parseInt(this.min)))*parseInt(this.value)-(100/(parseInt(this.max)-parseInt(this.min)))*parseInt(this.min);
-                            //     var children = this.parentNode.childNodes[1].childNodes;
-                            //     children[3].style.width=(100-value)+'%';
-                            //     children[5].style.right=(100-value)+'%';
-                            //     children[9].style.left=value+'%';children[13].style.left=value+'%';
-                            //     children[13].childNodes[1].innerHTML=this.value;"
-                        */}
+                        <StyledButton onClick={() => {
+                            const videoLengthInSeconds = getVideoDurationInSeconds(videoDuration);
 
-                        <StyledButton onClick={() => addTransformation({type: "Trim"})}>Trim</StyledButton>
+                            const toSeconds = (trimToPercent/100) * videoLengthInSeconds;
+                            const toTimeStamp = getVideoDurationFromSeconds(toSeconds);
+
+                            const fromSeconds = (trimFromPercent/100) * videoLengthInSeconds;
+                            const fromTimeStamp = getVideoDurationFromSeconds(fromSeconds);
+
+                            addTransformation({
+                                type: "Trim",
+                                trim: {
+                                    from: fromTimeStamp,
+                                    to: toTimeStamp
+                                }
+                            })
+                        }}>Trim</StyledButton>
                     </div>
                 )
         }

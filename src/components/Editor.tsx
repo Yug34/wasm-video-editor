@@ -6,7 +6,7 @@ import styled from "styled-components";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { Flex } from "./common";
 import Modal from "./Modal";
-import { Codec, Format, Transformation } from "../types";
+import { Codec, Format, Transformation, VideoDuration } from "../types";
 import { CODECS } from "../contants";
 
 // TODO: Maybe just process everything as MP4, then convert back to original/other formats
@@ -47,6 +47,7 @@ const Editor = () => {
     const ffmpegRef = useRef(new FFmpeg());
 
     const [videoFormat, setVideoFormat] = useState<Format | null>(null);
+    const [videoDuration, setVideoDuration] = useState<VideoDuration | null>(null);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
     const [isUnplayable, setIsUnplayable] = useState<boolean>(false);
@@ -78,6 +79,22 @@ const Editor = () => {
 
         const ffmpeg = ffmpegRef.current;
         await ffmpeg.writeFile(`input.${format}`, fileData);
+        ffmpeg.on('log', ({message}) => {
+            // DURATION    : 00:00:10.00000
+            let DurationPattern = /DURATION[ ]+: [\d]+:[\d]+:[\d]+.?[\d]*/gm;
+            if (message.match(DurationPattern)) {
+                const splitMessage = message.split(":");
+                let timeStamps = splitMessage.splice(1, splitMessage.length);
+                timeStamps.forEach((timeStamp) => {
+                    timeStamp = timeStamp.trim();
+                });
+                setVideoDuration({
+                    hours: parseInt(timeStamps[0]),
+                    minutes: parseInt(timeStamps[1]),
+                    seconds: parseInt(timeStamps[2])
+                });
+            }
+        });
         await ffmpeg.exec(['-i', `input.${format}`, '-vf', 'select=eq(n\\,0)', "-q:v", "3", "output_image.png"]);
         const data: FileData = await ffmpeg.readFile('output_image.png');
         const dataUrl = URL.createObjectURL(
@@ -161,6 +178,7 @@ const Editor = () => {
             {video && isLoaded ? (
                 <React.Fragment>
                     <Modal
+                        videoDuration={videoDuration!}
                         videoFormat={videoFormat!}
                         isModalOpen={isModalOpen}
                         setIsModalOpen={setIsModalOpen}
