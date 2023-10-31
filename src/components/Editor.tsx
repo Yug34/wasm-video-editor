@@ -115,7 +115,7 @@ const Editor = () => {
     const grayscale = async (format: Format) => {
         const ffmpeg = ffmpegRef.current;
         await ffmpeg.exec(['-i', `input.${format}`, '-vf', 'format=gray', `output.${format}`]);
-        await ffmpeg.rename(`output.${format}`, `input.${format}`);
+        // await ffmpeg.rename(`output.${format}`, `input.${format}`);
     }
 
     const trim = async (format: Format) => {
