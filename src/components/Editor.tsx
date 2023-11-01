@@ -71,6 +71,7 @@ const Editor = () => {
     }
 
     const initialize = async (e: ChangeEvent) => {
+        console.log("Initializing")
         const file = (e.target as HTMLInputElement)!.files![0];
 
         const format = file.type.split("/")[1] as Format;
@@ -131,13 +132,13 @@ const Editor = () => {
     const grayscale = async (format: Format) => {
         const ffmpeg = ffmpegRef.current;
         await ffmpeg.exec(['-i', `input.${format}`, '-vf', 'format=gray', `output.${format}`]);
-        // await ffmpeg.rename(`output.${format}`, `input.${format}`);
+        await ffmpeg.rename(`output.${format}`, `input.${format}`);
     }
 
     const mute = async (format: Format) => {
         const ffmpeg = ffmpegRef.current;
-        await ffmpeg.exec(['-i', `input.${format}`, '-c', '-an', `output.${format}`]);
-        // await ffmpeg.rename(`output.${format}`, `input.${format}`);
+        await ffmpeg.exec(['-i', `input.${format}`, '-vcodec', 'copy', '-an', `output.${format}`]);
+        await ffmpeg.rename(`output.${format}`, `input.${format}`);
     }
 
     const trim = async (format: Format, from: VideoDuration, to: VideoDuration) => {
