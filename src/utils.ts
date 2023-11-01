@@ -3,6 +3,7 @@ import { VideoDuration } from "./types";
 //TODO: Probably a better idea to just have a VideoDuration class instead of this:
 
 export const getVideoDurationInSeconds = (videoDuration: VideoDuration): number => {
+    console.log(videoDuration)
     return videoDuration.hours * 3600 + videoDuration.minutes * 60 + videoDuration.seconds;
 };
 

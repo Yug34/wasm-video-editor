@@ -8,7 +8,6 @@ import { Flex } from "./common";
 import Modal from "./Modal";
 import { Codec, Format, Transformation, VideoDuration } from "../types";
 import { CODECS } from "../contants";
-import { cp } from 'fs';
 import { getVideoDurationAsString, subtractVideoDuration } from '../utils';
 
 // TODO: Maybe just process everything as MP4, then convert back to original/other formats
@@ -82,14 +81,12 @@ const Editor = () => {
         const ffmpeg = ffmpegRef.current;
         await ffmpeg.writeFile(`input.${format}`, fileData);
         ffmpeg.on('log', ({message}) => {
-            // DURATION    : 00:00:10.00000
-            let DurationPattern = /DURATION[ ]+: [\d]+:[\d]+:[\d]+.?[\d]*/gm;
-            if (message.match(DurationPattern)) {
-                const splitMessage = message.split(":");
+            let DurationPattern = /DURATION *: \d+:\d+:\d+.?\d*(?=,*)/ig;
+            const msgToMatch = message.split(",")[0];
+            if (msgToMatch.match(DurationPattern)) {
+                const splitMessage = msgToMatch.split(":");
                 let timeStamps = splitMessage.splice(1, splitMessage.length);
-                timeStamps.forEach((timeStamp) => {
-                    timeStamp = timeStamp.trim();
-                });
+                timeStamps = timeStamps.map((timeStamp) => timeStamp.trim());
                 setVideoDuration({
                     hours: parseInt(timeStamps[0]),
                     minutes: parseInt(timeStamps[1]),
@@ -138,14 +135,14 @@ const Editor = () => {
     }
 
     const trim = async (format: Format, from: VideoDuration, to: VideoDuration) => {
-        console.log(getVideoDurationAsString(from), getVideoDurationAsString(to));
-        console.log(getVideoDurationAsString(subtractVideoDuration(to, from)));
-        console.log(subtractVideoDuration(to, from))
+        const startTimestamp = getVideoDurationAsString(from);
+
+        // WHAT? Why do I need to subtract twice for webms? This makes no sense.
+        // TODO: Here's the official docs: https://trac.ffmpeg.org/wiki/Seeking
+        const endTimeStamp = format === "webm" ? getVideoDurationAsString(subtractVideoDuration(subtractVideoDuration(to, from), from)) : getVideoDurationAsString(subtractVideoDuration(to, from));
 
         const ffmpeg = ffmpegRef.current;
-        // I don't know why this works when i subtract twice:
-        // TODO: Here's the official docs: https://trac.ffmpeg.org/wiki/Seeking
-        await ffmpeg.exec(["-ss", getVideoDurationAsString(from), "-i", `input.${format}`, "-t", getVideoDurationAsString(subtractVideoDuration(subtractVideoDuration(to, from), from)), "-c", "copy", `output.${videoFormat}`] )
+        await ffmpeg.exec(["-ss", startTimestamp, "-i", `input.${format}`, "-t", endTimeStamp, "-c", "copy", `output.${videoFormat}`] )
         await ffmpeg.rename(`output.${format}`, `input.${format}`);
     }
 
