@@ -4,6 +4,7 @@ import {Codec, Format, Transformation, TransformationTypes, VideoDuration} from 
 import {FORMAT_NAMES, FORMATS, TRANSFORMATION_NAMES} from "../../contants";
 import {StyledButton} from "../../App";
 import styled from "styled-components";
+import { getVideoDurationFromSeconds, getVideoDurationInSeconds } from "../../utils";
 
 const Slider = styled.div`
     width: 400px;
@@ -158,22 +159,6 @@ const Slider = styled.div`
         opacity: 1;
     }
 `;
-
-const getVideoDurationInSeconds = (videoDuration: VideoDuration): number => {
-    return videoDuration.hours * 3600 + videoDuration.minutes * 60 + videoDuration.seconds
-};
-
-const getVideoDurationFromSeconds = (timeInSeconds: number): VideoDuration => {
-    const hours = Math.floor(timeInSeconds / 3600);
-    const minutes = Math.floor((timeInSeconds % 3600) / 60);
-    const seconds = timeInSeconds % 60;
-
-    return {
-        hours: hours,
-        minutes: minutes,
-        seconds: seconds
-    };
-};
 
 type ModalProps = {
     videoDuration: VideoDuration;

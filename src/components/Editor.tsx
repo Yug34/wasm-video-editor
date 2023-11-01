@@ -8,6 +8,8 @@ import { Flex } from "./common";
 import Modal from "./Modal";
 import { Codec, Format, Transformation, VideoDuration } from "../types";
 import { CODECS } from "../contants";
+import { cp } from 'fs';
+import { getVideoDurationAsString, subtractVideoDuration } from '../utils';
 
 // TODO: Maybe just process everything as MP4, then convert back to original/other formats
 
@@ -135,9 +137,15 @@ const Editor = () => {
         // await ffmpeg.rename(`output.${format}`, `input.${format}`);
     }
 
-    const trim = async (format: Format) => {
+    const trim = async (format: Format, from: VideoDuration, to: VideoDuration) => {
+        console.log(getVideoDurationAsString(from), getVideoDurationAsString(to));
+        console.log(getVideoDurationAsString(subtractVideoDuration(to, from)));
+        console.log(subtractVideoDuration(to, from))
+
         const ffmpeg = ffmpegRef.current;
-        await ffmpeg.exec(["-ss", "00:00:05", "-i", `input.${format}`, "-ss", "00:00:10", "-t", "00:00:20", "-c", "copy", `output.${videoFormat}`] )
+        // I don't know why this works when i subtract twice:
+        // TODO: Here's the official docs: https://trac.ffmpeg.org/wiki/Seeking
+        await ffmpeg.exec(["-ss", getVideoDurationAsString(from), "-i", `input.${format}`, "-t", getVideoDurationAsString(subtractVideoDuration(subtractVideoDuration(to, from), from)), "-c", "copy", `output.${videoFormat}`] )
         await ffmpeg.rename(`output.${format}`, `input.${format}`);
     }
 
@@ -154,7 +162,7 @@ const Editor = () => {
                 case "Greyscale":
                     return await grayscale(format!);
                 case "Trim":
-                    return await trim(format!);
+                    return await trim(format!, transformation.trim!.from, transformation.trim!.to);
             }
         })).then(async () => {
             const ffmpeg = ffmpegRef.current;
