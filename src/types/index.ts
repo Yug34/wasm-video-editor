@@ -1,3 +1,9 @@
+export type VideoDuration = {
+    hours: number;
+    minutes: number;
+    seconds: number;
+}
+
 export type Format = "avi" | "mov" | "mp4" | "webm" | "wmv";
 
 export type FormatInfo = {
@@ -7,7 +13,7 @@ export type FormatInfo = {
     codecs: Codec[];
 }
 
-export type TransformationTypes = "Convert" | "Greyscale" | "Trim";
+export type TransformationTypes = "Convert" | "Greyscale" | "Trim" | "Mute";
 
 export type Transformation = {
     type: TransformationTypes;
@@ -31,9 +37,3 @@ export type CodecInfo = {
     };
     ffmpegLib: string;
 };
-
-export type VideoDuration = {
-    hours: number;
-    minutes: number;
-    seconds: number;
-}

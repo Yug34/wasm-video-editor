@@ -229,6 +229,12 @@ const Modal = (props: ModalProps) => {
                         <StyledButton onClick={() => addTransformation({type: "Greyscale"})}>Add Greyscale</StyledButton>
                     </>
                 );
+            case "Mute":
+                return (
+                    <>
+                        <StyledButton onClick={() => addTransformation({type: "Mute"})}>Mute Video</StyledButton>
+                    </>
+                )
             case "Trim":
                 return (
                     <div style={{width: "100%"}}>

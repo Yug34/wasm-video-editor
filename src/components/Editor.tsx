@@ -134,6 +134,12 @@ const Editor = () => {
         // await ffmpeg.rename(`output.${format}`, `input.${format}`);
     }
 
+    const mute = async (format: Format) => {
+        const ffmpeg = ffmpegRef.current;
+        await ffmpeg.exec(['-i', `input.${format}`, '-c', '-an', `output.${format}`]);
+        // await ffmpeg.rename(`output.${format}`, `input.${format}`);
+    }
+
     const trim = async (format: Format, from: VideoDuration, to: VideoDuration) => {
         const startTimestamp = getVideoDurationAsString(from);
 
@@ -158,6 +164,8 @@ const Editor = () => {
                     return await transcode(transformation.transcode!.to, transformation.transcode!.codec);
                 case "Greyscale":
                     return await grayscale(format!);
+                case "Mute":
+                    return await mute(format!);
                 case "Trim":
                     return await trim(format!, transformation.trim!.from, transformation.trim!.to);
             }
