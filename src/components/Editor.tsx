@@ -2,13 +2,14 @@ import { fetchFile, toBlobURL } from '@ffmpeg/util';
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { FileData } from "@ffmpeg/ffmpeg/dist/esm/types";
 import { StyledButton } from "../App";
-import styled from "styled-components";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { Flex } from "./common";
 import Modal from "./Modal";
 import { Codec, Format, Transformation, VideoDuration } from "../types";
 import { CODECS } from "../contants";
 import { getVideoDurationAsString, subtractVideoDuration } from '../utils';
+import * as Styles from "../App.Styles";
+import {HeadingContainer, InfoCard, InfoContainer, InfoHeading, InfoLine} from "../App.Styles";
 
 // TODO: Maybe just process everything as MP4, then convert back to original/other formats
 
@@ -18,58 +19,6 @@ import { getVideoDurationAsString, subtractVideoDuration } from '../utils';
 // p 2 u -> todo
 // u 2 p -> handled
 // u 2 u -> todo
-
-const StyledLabel = styled.label`
-  color: white;
-  cursor: pointer;
-  border: 1px solid white;
-  border-radius: 12px;
-  padding: 1rem;
-
-  &:hover {
-    background: #333333;
-  }
-`;
-
-const VideoOverlay = styled.div`
-  width: 500px;
-  margin: 0 auto;
-  padding: 20px;
-`;
-
-const MessageContainer = styled.div`
-  position: relative;
-  margin-top: 1rem;
-  border-top: 1px solid white;
-  column-gap: 12px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  padding: 2rem 3rem;
-`;
-
-const IconsContainer = styled.div`
-  display: flex;
-  column-gap: 8px;
-  position: absolute;
-  color: white;
-  right: 2rem;
-  padding: 1rem;
-`;
-
-const TransformationsContainer = styled(Flex)`
-  flex-direction: column;
-  width: 300px;
-  height: 100%;
-  border-left: 1px solid white;
-  padding-left: 1rem;
-`;
-
-const GHSvg = () => (
-    <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 496 512" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg">
-        <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/>
-    </svg>
-);
 
 const Editor = () => {
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -213,10 +162,10 @@ const Editor = () => {
 
     const VideoPlayer = ({isUnplayable}: {isUnplayable: boolean}) => {
         return (
-            <VideoOverlay>
+            <Styles.VideoOverlay>
                 <video style={{ width: "100%", display: "block" }} ref={videoRef} controls />
                 {isUnplayable && <div>Unplayable</div>}
-            </VideoOverlay>
+            </Styles.VideoOverlay>
         );
     };
 
@@ -241,31 +190,48 @@ const Editor = () => {
                                 </div>
                             )}
                             <VideoPlayer isUnplayable={isUnplayable} />
-                            <TransformationsContainer>
+                            <Styles.TransformationsContainer>
                                 <StyledButton onClick={openModal}>Apply a transformation</StyledButton>
                                 <StyledButton onClick={transform}>Apply all transformations!</StyledButton>
-                            </TransformationsContainer>
+                            </Styles.TransformationsContainer>
                         </Flex>
-                        <MessageContainer>
+                        <Styles.MessageContainer>
                             <p>Ffmpeg Logs:</p>
                             <p ref={messageRef}></p>
-                            <IconsContainer>
-                                <a href={"https://github.com/Yug34/wasm-video-editor"} aria-label={"Link to Project"} target={"_blank"}>
-                                    <GHSvg/>
+                            <Styles.IconsContainer>
+                                <a href={"https://github.com/Yug34/wasm-video-editor"} aria-label={"Link to Project"} target={"_blank"} rel={"noreferrer"}>
+                                    <Styles.GHSvg/>
                                 </a>
-                            </IconsContainer>
-                        </MessageContainer>
+                            </Styles.IconsContainer>
+                        </Styles.MessageContainer>
                     </Flex>
                 </React.Fragment>
             ) : (
-                <Flex style={{ justifyContent: "center", alignItems: "center" }}>
-                    <StyledLabel htmlFor="file-upload" className="custom-file-upload">{video ? "Loading ffmpeg" : "Upload video"}</StyledLabel>
+                <Styles.HeadingContainer>
+                    <h1>Hey 👋,</h1>
+                    <h3>
+                        Welcome to the video-editor where <i>your files are not uploaded anywhere!</i> ✨
+                    </h3>
+                    <Styles.StyledLabel htmlFor="file-upload" className="custom-file-upload">{video ? "Loading ffmpeg" : "Add a video to start"}</Styles.StyledLabel>
                     <input
                         style={{display: "none"}} id="file-upload" type="file" ref={fileInputRef}
                         onClick={video ? () => {} : load}
                         onChange={initialize}
                     />
-                </Flex>
+                    <Styles.InfoContainer>
+                        <Styles.InfoCard>
+                            <Styles.InfoHeading>How does it work?</Styles.InfoHeading>
+                            <div>All of the files you add here are kept only with you, and are never sent to any server anywhere.</div>
+                            <div>The video transformations occur on your computer locally through WebAssembly.</div>
+                        </Styles.InfoCard>
+                        <Styles.InfoLine />
+                        <Styles.InfoCard>
+                            <Styles.InfoHeading>Why did I make this?</Styles.InfoHeading>
+                            <div>I was annoyed at the fact that I had to upload my videos to random servers.</div>
+                            <div>It's anti-privacy. Once you upload your video to those servers, you never know what they'll do with it.</div>
+                        </Styles.InfoCard>
+                    </Styles.InfoContainer>
+                </Styles.HeadingContainer>
             )}
         </div>
     );
