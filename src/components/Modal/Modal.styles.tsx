@@ -34,6 +34,17 @@ export const ModalView = styled(Flex)`
   padding: 4rem 2rem;
 `;
 
+export const CommandContainer = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: fit-content;
+  border: 1px solid white;
+  border-radius: 0.5rem;
+  height: 2.5rem;
+  padding: 0 1rem;
+`;
+
 export const CodeContainer = styled.code`
 	border: 1px solid #999999;
 	border-radius: 12px;

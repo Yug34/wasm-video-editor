@@ -1,4 +1,4 @@
-import React, {SetStateAction, useEffect, useRef, useState} from "react";
+import React, {ChangeEvent, SetStateAction, useEffect, useRef, useState} from "react";
 import * as Styles from "./Modal.styles";
 import {Codec, Format, Transformation, TransformationTypes, VideoDuration} from "../../types";
 import {FORMAT_NAMES, FORMATS, TRANSFORMATION_NAMES} from "../../contants";
@@ -14,6 +14,18 @@ type ModalProps = {
     transformations: Transformation[];
     setTransformations: React.Dispatch<SetStateAction<Transformation[]>>;
 }
+
+interface CommandProps {
+    ffmpegCommand: string;
+}
+
+const Command = (props: CommandProps) => (
+    <Styles.CommandContainer>
+        <div>Command</div>
+        <div style={{height: "100%", width: "1px", background: "white", margin: "0 1rem"}}/>
+        <code>{props.ffmpegCommand}</code>
+    </Styles.CommandContainer>
+);
 
 const Modal = (props: ModalProps) => {
     const { videoDuration, isModalOpen, setIsModalOpen, transformations, setTransformations, videoFormat } = props;
@@ -37,6 +49,38 @@ const Modal = (props: ModalProps) => {
 
     const closeModal = () => {
         setIsModalOpen(false);
+    };
+
+    const handleTrimFromChange = (e: any) => {
+        const inputValue = parseInt(e.target.value);
+        const value = Math.min(inputValue, trimToPercent - 1);
+
+        setTrimFromPercent(value);
+    }
+
+    const handleTrimToChange = (e: any) => {
+        const inputValue = parseInt(e.target.value)
+        const value = Math.max(inputValue, trimFromPercent + 1);
+
+        setTrimToPercent(value);
+    }
+
+    const addTrimTransformation = () => {
+        const videoLengthInSeconds = getVideoDurationInSeconds(videoDuration);
+
+        const toSeconds = (trimToPercent/100) * videoLengthInSeconds;
+        const toTimeStamp = getVideoDurationFromSeconds(toSeconds);
+
+        const fromSeconds = (trimFromPercent/100) * videoLengthInSeconds;
+        const fromTimeStamp = getVideoDurationFromSeconds(fromSeconds);
+
+        addTransformation({
+            type: "Trim",
+            trim: {
+                from: fromTimeStamp,
+                to: toTimeStamp
+            }
+        })
     };
 
     const getModalViews = (transformationType: TransformationTypes) => {
@@ -73,17 +117,19 @@ const Modal = (props: ModalProps) => {
                 return (
                     <>
                         <StyledButton onClick={() => addTransformation({type: "Greyscale"})}>Add Greyscale</StyledButton>
+                        <Command ffmpegCommand={`ffmpeg -i input.${videoFormat} -vf format=gray output.${videoFormat}`}/>
                     </>
                 );
             case "Mute":
                 return (
                     <>
                         <StyledButton onClick={() => addTransformation({type: "Mute"})}>Mute Video</StyledButton>
+                        <Command ffmpegCommand={`ffmpeg -i input.${videoFormat} -vcodec copy -an output.${videoFormat}`}/>
                     </>
                 )
             case "Trim":
                 return (
-                    <div style={{width: "100%"}}>
+                    <>
                         <Styles.SliderContainer>
                             <Styles.Slider>
                                 <Styles.EmptyBar style={{width: `${trimFromPercent}%`, left: "0"}}/>
@@ -98,43 +144,22 @@ const Modal = (props: ModalProps) => {
                                     <span id="value">{trimToPercent}</span>
                                 </div>
                             </Styles.Slider>
-                            <Styles.SliderInput ref={inputRefFrom} type="range" value={trimFromPercent} max="100" min="0" step="1"
-                                onChange={(e) => {
-                                    const inputValue = parseInt(e.target.value);
-                                    const value = Math.min(inputValue, trimToPercent - 1);
 
-                                    setTrimFromPercent(value);
-                                }}
+                            <Styles.SliderInput 
+                                type="range" max="100" min="0" step="1"
+                                ref={inputRefFrom} value={trimFromPercent} 
+                                onChange={handleTrimFromChange}
                             />
                             
-                            <Styles.SliderInput ref={inputRefTo} type="range" value={trimToPercent} max="100" min="0" step="1" 
-                                onChange={(e) => {
-                                    const inputValue = parseInt(e.target.value)
-                                    const value = Math.max(inputValue, trimFromPercent + 1);
-
-                                    setTrimToPercent(value);
-                                }}
+                            <Styles.SliderInput 
+                                type="range" max="100" min="0" step="1"
+                                ref={inputRefTo} value={trimToPercent} 
+                                onChange={handleTrimToChange}
                             />
                         </Styles.SliderContainer>
 
-                        <StyledButton onClick={() => {
-                            const videoLengthInSeconds = getVideoDurationInSeconds(videoDuration);
-
-                            const toSeconds = (trimToPercent/100) * videoLengthInSeconds;
-                            const toTimeStamp = getVideoDurationFromSeconds(toSeconds);
-
-                            const fromSeconds = (trimFromPercent/100) * videoLengthInSeconds;
-                            const fromTimeStamp = getVideoDurationFromSeconds(fromSeconds);
-
-                            addTransformation({
-                                type: "Trim",
-                                trim: {
-                                    from: fromTimeStamp,
-                                    to: toTimeStamp
-                                }
-                            })
-                        }}>Trim</StyledButton>
-                    </div>
+                        <StyledButton onClick={addTrimTransformation}>Trim</StyledButton>
+                    </>
                 );
         }
     };

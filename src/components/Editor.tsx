@@ -202,9 +202,9 @@ const Editor = () => {
                                 ) : (
                                     <>
                                         <StyledButton onClick={openModal}>Add a transformation</StyledButton>
-                                        {transformations.map((transformation) => (
-                                            <div>{transformation.type}</div>
-                                        ))}
+                                            {transformations.map((transformation) => (
+                                                <div key={transformation.type}>{transformation.type}</div>
+                                            ))}
                                         <StyledButton onClick={transform}>Apply all transformations!</StyledButton>
                                     </>
                                 )}
