@@ -9,9 +9,9 @@ import { Codec, Format, Transformation, VideoDuration } from "../types";
 import { CODECS } from "../contants";
 import { getVideoDurationAsString, subtractVideoDuration } from '../utils';
 import * as Styles from "../App.Styles";
-import {HeadingContainer, InfoCard, InfoContainer, InfoHeading, InfoLine} from "../App.Styles";
 
 // TODO: Maybe just process everything as MP4, then convert back to original/other formats
+// TODO: There'a an ffmpeg.load error
 
 // NOTE: order should be trim -> compress -> greyscale/filters -> whatever (and then finally convert
 
@@ -54,7 +54,6 @@ const Editor = () => {
     }
 
     const initialize = async (e: ChangeEvent) => {
-        console.log("Initializing")
         const file = (e.target as HTMLInputElement)!.files![0];
 
         const format = file.type.split("/")[1] as Format;
@@ -78,7 +77,7 @@ const Editor = () => {
                 });
             }
         });
-        await ffmpeg.exec(['-i', `input.${format}`, '-vf', 'select=eq(n\\,0)', "-q:v", "3", "output_image.png"]);
+        await ffmpeg.exec(`-i input.${format} -vf select=eq(n\\,0) -q:v 3 output_image.png`.split(" "));
         const data: FileData = await ffmpeg.readFile('output_image.png');
         const dataUrl = URL.createObjectURL(
             new Blob([data], { type: 'image/png' })
@@ -100,7 +99,7 @@ const Editor = () => {
 
     const transcode = async (toFormat: Format, toCodec: Codec) => {
         const ffmpeg = ffmpegRef.current;
-        await ffmpeg.exec(['-i', `input.${videoFormat}`, '-threads', '4', '-strict', '-2', '-c:v', `${CODECS[toCodec].ffmpegLib}`, `input.${toFormat}`]);
+        await ffmpeg.exec(`-i input.${videoFormat} -threads 4 -strict -2 -c:v ${CODECS[toCodec].ffmpegLib} input.${toFormat}`.split(" "));
 
         if (toFormat === "wmv" || toFormat === "avi") {
             setIsUnplayable(true);
@@ -114,13 +113,13 @@ const Editor = () => {
 
     const grayscale = async (format: Format) => {
         const ffmpeg = ffmpegRef.current;
-        await ffmpeg.exec(['-i', `input.${format}`, '-vf', 'format=gray', `output.${format}`]);
+        await ffmpeg.exec(`-i input.${format} -vf format=gray output.${format}`.split(" "));
         await ffmpeg.rename(`output.${format}`, `input.${format}`);
     }
 
     const mute = async (format: Format) => {
         const ffmpeg = ffmpegRef.current;
-        await ffmpeg.exec(['-i', `input.${format}`, '-vcodec', 'copy', '-an', `output.${format}`]);
+        await ffmpeg.exec(`-i input.${format} -vcodec copy -an output.${format}`.split(" "));
         await ffmpeg.rename(`output.${format}`, `input.${format}`);
     }
 
@@ -191,8 +190,24 @@ const Editor = () => {
                             )}
                             <VideoPlayer isUnplayable={isUnplayable} />
                             <Styles.TransformationsContainer>
-                                <StyledButton onClick={openModal}>Apply a transformation</StyledButton>
-                                <StyledButton onClick={transform}>Apply all transformations!</StyledButton>
+                                {transformations.length === 0 ? (
+                                    <Styles.EmptyTransformationsContainer onClick={openModal}>
+                                        <div>No transformations added yet</div>
+                                        <svg stroke="currentColor" fill="currentColor" strokeWidth="0S" viewBox="0 0 1024 1024" height="4em" width="4em" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8Z"/>
+                                        <path d="M192 474h672q8 0 8 8v60q0 8-8 8H160q-8 0-8-8v-60q0-8 8-8Z"/>
+                                        </svg>
+                                        <div>Click here to Add</div>
+                                    </Styles.EmptyTransformationsContainer>
+                                ) : (
+                                    <>
+                                        <StyledButton onClick={openModal}>Add a transformation</StyledButton>
+                                        {transformations.map((transformation) => (
+                                            <div>{transformation.type}</div>
+                                        ))}
+                                        <StyledButton onClick={transform}>Apply all transformations!</StyledButton>
+                                    </>
+                                )}
                             </Styles.TransformationsContainer>
                         </Flex>
                         <Styles.MessageContainer>

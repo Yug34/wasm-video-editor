@@ -28,7 +28,9 @@ export const ModalContentContainer = styled(Flex)`
 
 export const ModalView = styled(Flex)`
   flex-direction: column;
-  width: auto;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   padding: 4rem 2rem;
 `;
 
@@ -94,4 +96,150 @@ export const Line = styled.div`
   width: 100%;
   height: 1px;
   background: white;
+`;
+
+export const EmptyBar = styled.div`
+    position: absolute;
+    height: 13px;
+`;
+
+export const RangeBar = styled.div`
+    position: absolute;
+    left: 0;
+    height: 14px;
+    background-color: white;
+`;
+
+export const SliderContainer = styled.div`
+    width: 400px;
+    position: relative;
+    height: 15px;
+    text-align: left;
+    margin-bottom: 2rem;
+
+    & > div > .sign {
+        opacity: 0;
+        position: absolute;
+        margin-left: -19px;
+        top: -39px;
+        z-index:3;
+        background-color: black;
+        color: #fff;
+        width: 28px;
+        height: 28px;
+        border-radius: 28px;
+        -webkit-border-radius: 28px;
+        align-items: center;
+        -webkit-justify-content: center;
+        justify-content: center;
+        text-align: center;
+    }
+    
+    & > div > .sign > span {
+        font-size: 14px;
+        line-height: 24px;
+    }
+      
+    & > div > .sign {
+        opacity: 1;
+    }
+`;
+
+export const Slider = styled.div`
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 14px;
+    border: 1px solid white;
+`;
+
+export const Thumb = styled.span`
+    position: absolute;
+    top: -7px;
+    z-index: 2;
+    height: 28px;
+    width: 10px;
+    text-align: left;
+    margin-left: -11px;
+    background-color: black;
+    border: 1px solid white;
+    outline: none;
+`;
+
+export const SliderInput = styled.input`
+    position: absolute;
+    pointer-events: none;
+    -webkit-appearance: none;
+    z-index: 3;
+    height: 14px;
+    top: -2px;
+    width: 100%;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+    filter: alpha(opacity=0);
+    -moz-opacity: 0;
+    -khtml-opacity: 0;
+    opacity: 0;
+
+    &::-ms-track {
+        -webkit-appearance: none;
+        background: transparent;
+        color: transparent;
+    }
+  
+    &::-moz-range-track {
+        -moz-appearance: none;
+        background: transparent;
+        color: transparent;
+    }
+  
+    &:focus::-webkit-slider-runnable-track {
+        background: transparent;
+        border: transparent;
+    }
+    
+    &:focus {
+        outline: none;
+    }
+    
+    &::-ms-thumb {
+        pointer-events: all;
+        width: 28px;
+        height: 28px;
+        border-radius: 0px;
+        border: 0 none;
+        background: red;
+    }
+    
+    &::-moz-range-thumb {
+        pointer-events: all;
+        width: 28px;
+        height: 28px;
+        border-radius: 0px;
+        border: 0 none;
+        background: red;
+    }
+    
+    &::-webkit-slider-thumb {
+        pointer-events: all;
+        width: 28px;
+        height: 28px;
+        border-radius: 0px;
+        border: 0 none;
+        background: red;
+        -webkit-appearance: none;
+    }
+    
+    &::-ms-fill-lower {
+        background: transparent;
+        border: 0 none;
+    }
+    
+    &::-ms-fill-upper {
+        background: transparent;
+        border: 0 none;
+    }
+    
+    &::-ms-tooltip {
+        display: none;
+    }
 `;

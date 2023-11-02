@@ -41,7 +41,11 @@ export const IconsContainer = styled.div`
 `;
 
 export const TransformationsContainer = styled(Flex)`
+  text-align: center;
   flex-direction: column;
+  padding: 1rem 0;
+  row-gap: 1rem;
+  justify-content: space-between;
   width: 300px;
   height: 100%;
   border-left: 1px solid white;
@@ -68,6 +72,22 @@ export const HeadingContainer = styled.div`
   
   h3 {
     font-weight: 500;
+  }
+`;
+
+export const EmptyTransformationsContainer = styled.div`
+  cursor: pointer;
+  border: 1px solid #999999;
+  padding: 1rem;
+  border-radius: 1rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  &:hover, &:hover div, &:hover svg {
+    background: #333333;
   }
 `;
 
