@@ -13,7 +13,7 @@ export type FormatInfo = {
     codecs: Codec[];
 }
 
-export type TransformationTypes = "Convert" | "Greyscale" | "Trim" | "Mute";
+export type TransformationTypes = "Convert" | "Grayscale" | "Trim" | "Mute";
 
 export type Transformation = {
     type: TransformationTypes;

@@ -13,7 +13,7 @@ import * as Styles from "../App.Styles";
 // TODO: Maybe just process everything as MP4, then convert back to original/other formats
 // TODO: There'a an ffmpeg.load error
 
-// NOTE: order should be trim -> compress -> greyscale/filters -> whatever (and then finally convert
+// NOTE: order should be trim -> compress -> grayscale/filters -> whatever (and then finally convert
 
 // p 2 p -> handled
 // p 2 u -> todo
@@ -131,7 +131,7 @@ const Editor = () => {
         const endTimeStamp = format === "webm" ? getVideoDurationAsString(subtractVideoDuration(subtractVideoDuration(to, from), from)) : getVideoDurationAsString(subtractVideoDuration(to, from));
 
         const ffmpeg = ffmpegRef.current;
-        await ffmpeg.exec(["-ss", startTimestamp, "-i", `input.${format}`, "-t", endTimeStamp, "-c", "copy", `output.${videoFormat}`] )
+        await ffmpeg.exec(`-ss ${startTimestamp} -i input.${format} -t ${endTimeStamp} -c copy output.${videoFormat}`.split(" "))
         await ffmpeg.rename(`output.${format}`, `input.${format}`);
     }
 
@@ -145,7 +145,7 @@ const Editor = () => {
             switch (transformation.type) {
                 case "Convert":
                     return await transcode(transformation.transcode!.to, transformation.transcode!.codec);
-                case "Greyscale":
+                case "Grayscale":
                     return await grayscale(format!);
                 case "Mute":
                     return await mute(format!);

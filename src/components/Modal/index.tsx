@@ -19,13 +19,41 @@ interface CommandProps {
     ffmpegCommand: string;
 }
 
-const Command = (props: CommandProps) => (
-    <Styles.CommandContainer>
-        <div>Command</div>
-        <div style={{height: "100%", width: "1px", background: "white", margin: "0 1rem"}}/>
-        <code>{props.ffmpegCommand}</code>
-    </Styles.CommandContainer>
-);
+const CommandHLine = styled.span`
+  height: 100%;
+  width: 1px;
+  background: white;
+  margin: 0 1rem;
+`;
+
+const Command = ({ffmpegCommand}: CommandProps) => {
+    const [isCopied, setIsCopied] = useState<boolean>(false);
+
+    return (
+        <Styles.CommandContainer onClick={() => {
+            navigator.clipboard.writeText(ffmpegCommand).then(() => {
+                setIsCopied(true);
+                setTimeout(() => {
+                    setIsCopied(false);
+                }, 3000);
+            });
+        }}>
+            <div>Command</div>
+            <CommandHLine />
+            <code>{ffmpegCommand}</code>
+            <CommandHLine />
+            {!isCopied ? (
+                <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 32 32" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 4 4 L 4 24 L 11 24 L 11 22 L 6 22 L 6 6 L 18 6 L 18 7 L 20 7 L 20 4 Z M 12 8 L 12 28 L 28 28 L 28 8 Z M 14 10 L 26 10 L 26 26 L 14 26 Z"/>
+                </svg>
+            ) : (
+                <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 1024 1024" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M912 190h-69.9c-9.8 0-19.1 4.5-25.1 12.2L404.7 724.5 207 474a32 32 0 0 0-25.1-12.2H112c-6.7 0-10.4 7.7-6.3 12.9l273.9 347c12.8 16.2 37.4 16.2 50.3 0l488.4-618.9c4.1-5.1.4-12.8-6.3-12.8z"/>
+                </svg>
+            )}
+        </Styles.CommandContainer>
+    )
+};
 
 const Modal = (props: ModalProps) => {
     const { videoDuration, isModalOpen, setIsModalOpen, transformations, setTransformations, videoFormat } = props;
@@ -113,10 +141,10 @@ const Modal = (props: ModalProps) => {
                         <StyledButton onClick={() => addTransformation({type: "Convert", transcode: {to: videoConvertFormat, codec: videoConvertCodec}})}>Convert</StyledButton>
                     </>
                 );
-            case "Greyscale":
+            case "Grayscale":
                 return (
                     <>
-                        <StyledButton onClick={() => addTransformation({type: "Greyscale"})}>Add Greyscale</StyledButton>
+                        <StyledButton onClick={() => addTransformation({type: "Grayscale"})}>Add Grayscale</StyledButton>
                         <Command ffmpegCommand={`ffmpeg -i input.${videoFormat} -vf format=gray output.${videoFormat}`}/>
                     </>
                 );

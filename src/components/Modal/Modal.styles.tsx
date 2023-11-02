@@ -43,6 +43,7 @@ export const CommandContainer = styled.div`
   border-radius: 0.5rem;
   height: 2.5rem;
   padding: 0 1rem;
+  cursor: pointer;
 `;
 
 export const CodeContainer = styled.code`
