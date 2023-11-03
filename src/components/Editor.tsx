@@ -3,13 +3,12 @@ import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { FileData } from "@ffmpeg/ffmpeg/dist/esm/types";
 import { StyledButton } from "../App";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
-import { Flex } from "./common";
+import {CheckSVG, Flex, GitHubSVG} from "./common";
 import Modal from "./Modal";
 import { Codec, Format, Transformation, VideoDuration } from "../types";
 import { CODECS } from "../contants";
 import { getVideoDurationAsString, subtractVideoDuration } from '../utils';
 import * as Styles from "../App.Styles";
-import {Step, StepsContainer, StepsLine} from "../App.Styles";
 
 // TODO: Maybe just process everything as MP4, then convert back to original/other formats
 // TODO: There'a an ffmpeg.load error
@@ -20,6 +19,22 @@ import {Step, StepsContainer, StepsLine} from "../App.Styles";
 // p 2 u -> todo
 // u 2 p -> handled
 // u 2 u -> todo
+
+interface StepProps {
+    completed: boolean;
+    clickHandler?(): void;
+    text?: string;
+    completedText: string;
+    svg: Element;
+}
+const Step = ({completed, clickHandler = () => {}, completedText, text = "", svg}: StepProps) => {
+    return (
+        <Styles.Step $completed={completed} onClick={completed ? () => {} : clickHandler}>
+            <>{svg}</>
+            {completed ? completedText : text}
+        </Styles.Step>
+    );
+};
 
 const Editor = () => {
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -38,6 +53,7 @@ const Editor = () => {
     const openModal = () => setIsModalOpen(true)
 
     const [transformations, setTransformations] = useState<Transformation[]>([]);
+    const [isTransformComplete, setIsTransformComplete] = useState<boolean>(false);
 
     const load = async () => {
         const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.4/dist/umd';
@@ -158,6 +174,7 @@ const Editor = () => {
             const ffmpeg = ffmpegRef.current;
             const data: FileData = await ffmpeg.readFile(`input.${format}`);
             videoRef.current!.src = URL.createObjectURL(new Blob([data], {type: `video/${format}`}));
+            setIsTransformComplete(true);
         });
     }
 
@@ -187,18 +204,11 @@ const Editor = () => {
                             <Flex style={{ flexDirection: "column" }}>
                                 <VideoPlayer isUnplayable={isUnplayable} />
                                 <Styles.StepsContainer>
-                                    <Styles.Step $completed={true}>
-                                        <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 1024 1024" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M912 190h-69.9c-9.8 0-19.1 4.5-25.1 12.2L404.7 724.5 207 474a32 32 0 0 0-25.1-12.2H112c-6.7 0-10.4 7.7-6.3 12.9l273.9 347c12.8 16.2 37.4 16.2 50.3 0l488.4-618.9c4.1-5.1.4-12.8-6.3-12.8z"/>
-                                        </svg>
-                                        Added file
-                                    </Styles.Step>
+                                    <Step completed={true} completedText={"Added Video"} svg={<CheckSVG/>} />
                                     <Styles.Step $completed={transformations.length > 0} onClick={transformations.length > 0 ? () => {} : openModal}>
                                         {transformations.length > 0 ? (
                                             <>
-                                                <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 1024 1024" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M912 190h-69.9c-9.8 0-19.1 4.5-25.1 12.2L404.7 724.5 207 474a32 32 0 0 0-25.1-12.2H112c-6.7 0-10.4 7.7-6.3 12.9l273.9 347c12.8 16.2 37.4 16.2 50.3 0l488.4-618.9c4.1-5.1.4-12.8-6.3-12.8z"/>
-                                                </svg>
+                                                <CheckSVG/>
                                                 Added a transformation
                                             </>
                                         ) : (
@@ -211,16 +221,23 @@ const Editor = () => {
                                             </>
                                         )}
                                     </Styles.Step>
-                                    <Styles.Step $completed={false}>
-                                        <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 1024 1024" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M912 190h-69.9c-9.8 0-19.1 4.5-25.1 12.2L404.7 724.5 207 474a32 32 0 0 0-25.1-12.2H112c-6.7 0-10.4 7.7-6.3 12.9l273.9 347c12.8 16.2 37.4 16.2 50.3 0l488.4-618.9c4.1-5.1.4-12.8-6.3-12.8z"/>
-                                        </svg>
-                                        Added file
+                                    <Styles.Step $completed={isTransformComplete} onClick={isTransformComplete ? () => {} : transform}>
+                                        {isTransformComplete ? (
+                                            <>
+                                                <CheckSVG/>
+                                                Processed!
+                                            </>
+                                        ) : (
+                                            <>
+                                                <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 1024 1024" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M912 190h-69.9c-9.8 0-19.1 4.5-25.1 12.2L404.7 724.5 207 474a32 32 0 0 0-25.1-12.2H112c-6.7 0-10.4 7.7-6.3 12.9l273.9 347c12.8 16.2 37.4 16.2 50.3 0l488.4-618.9c4.1-5.1.4-12.8-6.3-12.8z"/>
+                                                </svg>
+                                                Click to transform
+                                            </>
+                                        )}
                                     </Styles.Step>
                                     <Styles.Step $completed={false}>
-                                        <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 1024 1024" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M912 190h-69.9c-9.8 0-19.1 4.5-25.1 12.2L404.7 724.5 207 474a32 32 0 0 0-25.1-12.2H112c-6.7 0-10.4 7.7-6.3 12.9l273.9 347c12.8 16.2 37.4 16.2 50.3 0l488.4-618.9c4.1-5.1.4-12.8-6.3-12.8z"/>
-                                        </svg>
+                                        <CheckSVG/>
                                         Added file
                                     </Styles.Step>
                                     <Styles.StepsLine />
@@ -252,7 +269,7 @@ const Editor = () => {
                             <p ref={messageRef}></p>
                             <Styles.IconsContainer>
                                 <a href={"https://github.com/Yug34/wasm-video-editor"} aria-label={"Link to Project"} target={"_blank"} rel={"noreferrer"}>
-                                    <Styles.GHSvg/>
+                                    <GitHubSVG />
                                 </a>
                             </Styles.IconsContainer>
                         </Styles.MessageContainer>
