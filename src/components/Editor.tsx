@@ -27,7 +27,6 @@ const Editor = () => {
 
     const [isLoaded, setIsLoaded] = useState<boolean>(false);
     const [video, setVideo] = useState<Uint8Array | null>(null);
-    const [videoThumbnail, setVideoThumbnail] = useState<string | null>(null);
     const ffmpegRef = useRef(new FFmpeg());
 
     const [videoFormat, setVideoFormat] = useState<Format | null>(null);
@@ -77,13 +76,10 @@ const Editor = () => {
                 });
             }
         });
-        await ffmpeg.exec(`-i input.${format} -vf select=eq(n\\,0) -q:v 3 output_image.png`.split(" "));
-        const data: FileData = await ffmpeg.readFile('output_image.png');
-        const dataUrl = URL.createObjectURL(
-            new Blob([data], { type: 'image/png' })
-        );
-        setVideoThumbnail(dataUrl);
-        await ffmpeg.deleteFile('output_image.png');
+
+        ffmpeg.readFile(`input.${format}`).then((videoData) => {
+            videoRef.current!.src = URL.createObjectURL(new Blob([videoData], {type: `video/${format}`}));
+        });
 
         setVideo(fileData);
     }
@@ -170,7 +166,6 @@ const Editor = () => {
 
     return (
         <div style={{width: "100%", height: "100%"}}>
-            {/*<video src={require("../videos/bunnywmv.wmv")} autoPlay={true} controls={true}/>*/}
             {video && isLoaded ? (
                 <React.Fragment>
                     <Modal
@@ -183,11 +178,6 @@ const Editor = () => {
                     />
                     <Flex style={{ flexDirection: "column" }}>
                         <Flex style={{padding: "1rem"}}>
-                            {videoThumbnail && (
-                                <div style={{border: "1px solid white", borderRadius: "1rem", padding: "1rem", width: "fit-content"}}>
-                                    <img src={videoThumbnail} alt={"thumbnail"} />
-                                </div>
-                            )}
                             <VideoPlayer isUnplayable={isUnplayable} />
                             <Styles.TransformationsContainer>
                                 {transformations.length === 0 ? (
