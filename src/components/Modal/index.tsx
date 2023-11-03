@@ -71,7 +71,7 @@ const Modal = (props: ModalProps) => {
     }, [videoConvertFormat]);
 
     const addTransformation = (transformation: Transformation) => {
-        console.log(transformation)
+        console.log(transformation);
         setTransformations(prevTransformations => [...prevTransformations, transformation])
     }
 

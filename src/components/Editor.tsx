@@ -62,7 +62,9 @@ const Editor = () => {
         const fileData = await fetchFile(file);
 
         const ffmpeg = ffmpegRef.current;
+
         await ffmpeg.writeFile(`input.${format}`, fileData);
+
         ffmpeg.on('log', ({message}) => {
             let DurationPattern = /DURATION *: \d+:\d+:\d+.?\d*(?=,*)/ig;
             const msgToMatch = message.split(",")[0];
@@ -77,6 +79,9 @@ const Editor = () => {
                 });
             }
         });
+
+        // Does nothing, just getting the metadata of the video.
+        await ffmpeg.exec([`-i`, `input.${format}`]);
 
         ffmpeg.readFile(`input.${format}`).then((videoData) => {
             videoRef.current!.src = URL.createObjectURL(new Blob([videoData], {type: `video/${format}`}));
