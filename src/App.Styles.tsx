@@ -43,13 +43,42 @@ export const IconsContainer = styled.div`
 export const TransformationsContainer = styled(Flex)`
   text-align: center;
   flex-direction: column;
-  padding: 1rem 0;
+  padding: 1rem 0 1rem 1rem;
   row-gap: 1rem;
   justify-content: space-between;
   width: 300px;
+  min-width: 300px;
   height: 100%;
   border-left: 1px solid white;
-  padding-left: 1rem;
+`;
+
+export const StepsContainer = styled(Flex)`
+  margin-top: auto;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  height: 20px;
+`;
+
+export const Step = styled.div<{$completed?: boolean}>`
+  margin: 0 auto;
+  display: flex;
+  height: 4rem;
+  column-gap: 8px;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  padding: 1rem;
+  border-radius: 1rem;
+  border: ${(props) => props.$completed ? "2px solid white" : "1px solid #666666"};
+  cursor: ${(props) => props.$completed ? "default" : "pointer"};
+`;
+
+export const StepsLine = styled.div`
+  background: white; 
+  height: 1px;
+  width: 80%;
+  position: absolute;
 `;
 
 export const GHSvg = () => (
