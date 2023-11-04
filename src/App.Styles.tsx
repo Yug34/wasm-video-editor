@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import {Flex} from "./components/common";
-import React from "react";
 
 export const StyledLabel = styled.label`
   color: white;
@@ -14,10 +13,23 @@ export const StyledLabel = styled.label`
   }
 `;
 
-export const VideoOverlay = styled.div`
+export const VideoOverlay = styled.div<{$isUnplayable: boolean}>`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 500px;
   margin: 0 auto;
   padding: 20px;
+  border: ${(props) => props.$isUnplayable ? "1px solid white" : "none"};
+  border-radius: 1rem;
+
+  video {
+    opacity: ${(props) => props.$isUnplayable ? "0.5" : "1"};
+    width: 100%;
+    height: 100%;
+    border-radius: 1rem; 
+  }
 `;
 
 export const MessageContainer = styled.div`

@@ -183,9 +183,9 @@ const Editor = () => {
 
     const VideoPlayer = ({isUnplayable}: {isUnplayable: boolean}) => {
         return (
-            <Styles.VideoOverlay>
-                <video style={{ width: "100%", display: "block" }} ref={videoRef} controls />
-                {isUnplayable && <div>Unplayable</div>}
+            <Styles.VideoOverlay $isUnplayable={isUnplayable}>
+                <video ref={videoRef} controls />
+                {isUnplayable && <div style={{position: "absolute"}}>Unplayable</div>}
             </Styles.VideoOverlay>
         );
     };
