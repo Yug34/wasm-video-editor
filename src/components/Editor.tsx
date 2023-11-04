@@ -1,5 +1,5 @@
 import { fetchFile, toBlobURL } from '@ffmpeg/util';
-import React, { ChangeEvent, useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, ReactElement, useEffect, useRef, useState } from "react";
 import { FileData } from "@ffmpeg/ffmpeg/dist/esm/types";
 import { StyledButton } from "../App";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
@@ -25,13 +25,15 @@ interface StepProps {
     clickHandler?(): void;
     text?: string;
     completedText: string;
-    svg: Element;
+    svg: ReactElement;
 }
 const Step = ({completed, clickHandler = () => {}, completedText, text = "", svg}: StepProps) => {
     return (
         <Styles.Step $completed={completed} onClick={completed ? () => {} : clickHandler}>
-            <>{svg}</>
-            {completed ? completedText : text}
+            <>
+                {svg}
+                {completed ? completedText : text}
+            </>
         </Styles.Step>
     );
 };
