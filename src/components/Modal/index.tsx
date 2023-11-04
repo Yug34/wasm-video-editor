@@ -163,12 +163,12 @@ const Modal = (props: ModalProps) => {
                                 <Styles.EmptyBar style={{width: `${trimFromPercent}%`, left: "0"}}/>
                                 <Styles.EmptyBar style={{width: `${100 - trimToPercent + 1}%`, right: "0", top: "-1px"}}/>
                                 <Styles.RangeBar id="range" style={{left: `${trimFromPercent - 1}%`, right: `${100 - trimToPercent + 1}%`}}/>
-                                <Styles.Thumb style={{left: `${trimFromPercent}%`}}/>
-                                <Styles.Thumb style={{left: `${trimToPercent}%`}}/>
-                                <div className="sign" style={{left: `${trimFromPercent}%`}}>
+                                <Styles.Thumb style={{left: `calc(${trimFromPercent}% + ${14 * (100 - trimFromPercent)/100}px)`}}/>
+                                <Styles.Thumb style={{left: `calc(${trimToPercent}% + ${14 * (100 - trimToPercent)/100}px)`}}/>
+                                <div className="sign" style={{left: `calc(${trimFromPercent}% + ${14 * (100 - trimFromPercent)/100}px)`}}>
                                     <span id="value">{trimFromPercent}</span>
                                 </div>
-                                <div className="sign" style={{left: `${trimToPercent}%`}}>
+                                <div className="sign" style={{left: `calc(${trimToPercent}% + ${14 * (100 - trimToPercent)/100}px)`}}>
                                     <span id="value">{trimToPercent}</span>
                                 </div>
                             </Styles.Slider>

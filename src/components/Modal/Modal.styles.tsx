@@ -170,7 +170,7 @@ export const Thumb = styled.span`
     top: -7px;
     z-index: 2;
     height: 28px;
-    width: 10px;
+    width: 12px;
     text-align: left;
     margin-left: -11px;
     background-color: black;
@@ -215,7 +215,7 @@ export const SliderInput = styled.input`
     
     &::-ms-thumb {
         pointer-events: all;
-        width: 28px;
+        width: 12px;
         height: 28px;
         border-radius: 0px;
         border: 0 none;
@@ -224,7 +224,7 @@ export const SliderInput = styled.input`
     
     &::-moz-range-thumb {
         pointer-events: all;
-        width: 28px;
+        width: 12px;
         height: 28px;
         border-radius: 0px;
         border: 0 none;
@@ -233,7 +233,7 @@ export const SliderInput = styled.input`
     
     &::-webkit-slider-thumb {
         pointer-events: all;
-        width: 28px;
+        width: 12px;
         height: 28px;
         border-radius: 0px;
         border: 0 none;
