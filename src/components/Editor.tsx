@@ -174,8 +174,9 @@ const Editor = () => {
             }
         })).then(async () => {
             const ffmpeg = ffmpegRef.current;
-            const data: FileData = await ffmpeg.readFile(`input.${format}`);
-            videoRef.current!.src = URL.createObjectURL(new Blob([data], {type: `video/${format}`}));
+            ffmpeg.readFile(`input.${format}`).then((data) => {
+                videoRef.current!.src = URL.createObjectURL(new Blob([data], {type: `video/${format}`}));
+            });
             setIsTransformComplete(true);
         });
     }
