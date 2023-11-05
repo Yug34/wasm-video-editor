@@ -133,14 +133,11 @@ export const SliderContainer = styled.div`
         opacity: 0;
         position: absolute;
         margin-left: -19px;
-        top: -39px;
         z-index:3;
         background-color: black;
         color: #fff;
         width: 28px;
         height: 28px;
-        border-radius: 28px;
-        -webkit-border-radius: 28px;
         align-items: center;
         -webkit-justify-content: center;
         justify-content: center;
@@ -220,6 +217,7 @@ export const SliderInput = styled.input`
         border-radius: 0px;
         border: 0 none;
         background: red;
+        cursor: pointer;
     }
     
     &::-moz-range-thumb {
@@ -229,6 +227,7 @@ export const SliderInput = styled.input`
         border-radius: 0px;
         border: 0 none;
         background: red;
+        cursor: pointer;
     }
     
     &::-webkit-slider-thumb {
@@ -239,6 +238,7 @@ export const SliderInput = styled.input`
         border: 0 none;
         background: red;
         -webkit-appearance: none;
+        cursor: pointer;
     }
     
     &::-ms-fill-lower {
