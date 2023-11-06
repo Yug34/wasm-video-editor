@@ -6,7 +6,6 @@ import {StyledButton} from "../../App";
 import styled from "styled-components";
 import {getVideoDurationAsString, getVideoDurationFromSeconds, getVideoDurationInSeconds} from "../../utils";
 import {FFmpeg} from "@ffmpeg/ffmpeg";
-import {FileData} from "@ffmpeg/ffmpeg/dist/esm/types";
 
 type ModalProps = {
     videoDuration: VideoDuration;
@@ -76,9 +75,11 @@ const Modal = ({ ffmpegRef, videoDuration, isModalOpen, setIsModalOpen, transfor
     useEffect(() => {
         setShowTrimThumbnail(false);
 
-        setTimeout(() => {
+        const debouncedGetVideoFrame = setTimeout(() => {
             setShowTrimThumbnail(true);
-        }, 1000);
+        }, 500);
+
+        return () => clearTimeout(debouncedGetVideoFrame);
     }, [trimThumbnailPercent]);
 
     useEffect(() => {
@@ -88,18 +89,14 @@ const Modal = ({ ffmpegRef, videoDuration, isModalOpen, setIsModalOpen, transfor
             const thumbnailTimeInSeconds = (trimThumbnailPercent/100) * videoLengthInSeconds;
             const thumbnailTimestamp = getVideoDurationFromSeconds(thumbnailTimeInSeconds);
 
-            console.log(getVideoDurationAsString(thumbnailTimestamp));
-
-            ffmpegRef.current.exec(`-i video.${videoFormat} -ss 00:00:01 -frames 1 output_image.png`.split(" ")).then(async () => {
-                // ffmpegRef.current.exec(`-i video.${videoFormat} -vf "select=gte(n\,40)" -vframes 1 output_image.png`.split(" ")).then(async () => {
-                //     ffmpegRef.current.readFile('output_image.png').then((data) => {
-                //         const dataUrl = URL.createObjectURL(
-                //             new Blob([data], { type: 'image/png' })
-                //         );
-                //         console.log(data);
-                //         setTrimThumbnail(dataUrl);
-                //         ffmpegRef.current.deleteFile('output_image.png');
-                //     });
+            ffmpegRef.current.exec(`-ss ${getVideoDurationAsString(thumbnailTimestamp)} -i input.${videoFormat} -frames:v 1 output_image.png`.split(" ")).then(async () => {
+                ffmpegRef.current.readFile('output_image.png').then((data) => {
+                    const dataUrl = URL.createObjectURL(
+                        new Blob([data], { type: 'image/png' })
+                    );
+                    setTrimThumbnail(dataUrl);
+                    ffmpegRef.current.deleteFile('output_image.png');
+                });
                 console.log(await ffmpegRef.current.listDir("."));
             });
         }
@@ -206,6 +203,9 @@ const Modal = ({ ffmpegRef, videoDuration, isModalOpen, setIsModalOpen, transfor
                     <>
                         {trimThumbnail && (
                             <div style={{border: "1px solid white", borderRadius: "1rem", padding: "1rem", width: "fit-content"}}>
+                                {!showTrimThumbnail && (
+                                    <div>This should show up as overlay</div>
+                                )}
                                 <img src={trimThumbnail} alt={"thumbnail"} />
                             </div>
                         )}
