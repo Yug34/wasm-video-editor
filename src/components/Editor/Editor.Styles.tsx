@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import {Flex} from "./components/common";
+import {Flex} from "../common";
 
 export const StyledLabel = styled.label`
   color: white;
