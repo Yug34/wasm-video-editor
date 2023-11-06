@@ -6,6 +6,8 @@ import {StyledButton} from "../../App";
 import styled from "styled-components";
 import {getVideoDurationAsString, getVideoDurationFromSeconds, getVideoDurationInSeconds} from "../../utils";
 import {FFmpeg} from "@ffmpeg/ffmpeg";
+import {Flex} from "../common";
+import {Loader, LoaderContainer} from "./Modal.styles";
 
 type ModalProps = {
     videoDuration: VideoDuration;
@@ -202,9 +204,11 @@ const Modal = ({ ffmpegRef, videoDuration, isModalOpen, setIsModalOpen, transfor
                 return (
                     <>
                         {trimThumbnail && (
-                            <div style={{border: "1px solid white", borderRadius: "1rem", padding: "1rem", width: "fit-content"}}>
+                            <div style={{position: "relative", border: "1px solid white", width: "fit-content"}}>
                                 {!showTrimThumbnail && (
-                                    <div>This should show up as overlay</div>
+                                    <Styles.LoaderContainer>
+                                        <Styles.Loader />
+                                    </Styles.LoaderContainer>
                                 )}
                                 <img src={trimThumbnail} alt={"thumbnail"} />
                             </div>
