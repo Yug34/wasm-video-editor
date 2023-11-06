@@ -6,8 +6,6 @@ import {StyledButton} from "../../App";
 import styled from "styled-components";
 import {getVideoDurationAsString, getVideoDurationFromSeconds, getVideoDurationInSeconds} from "../../utils";
 import {FFmpeg} from "@ffmpeg/ffmpeg";
-import {Flex} from "../common";
-import {Loader, LoaderContainer} from "./Modal.styles";
 
 type ModalProps = {
     videoDuration: VideoDuration;
@@ -56,7 +54,7 @@ const Command = ({ffmpegCommand}: CommandProps) => {
                 </svg>
             )}
         </Styles.CommandContainer>
-    )
+    );
 };
 
 const Modal = ({ ffmpegRef, videoDuration, isModalOpen, setIsModalOpen, transformations, setTransformations, videoFormat }: ModalProps) => {
@@ -74,6 +72,17 @@ const Modal = ({ ffmpegRef, videoDuration, isModalOpen, setIsModalOpen, transfor
     const inputRefTo = useRef<HTMLInputElement | null>(null);
     const inputRefThumbnail = useRef<HTMLInputElement | null>(null);
 
+    const checkTransformationsArrayFor = (trType: TransformationTypes): boolean => {
+        for (const transformation of transformations) {
+            if (transformation.type === trType) {
+                return true;
+            }
+        }
+
+        return false;
+    };
+
+
     useEffect(() => {
         setShowTrimThumbnail(false);
 
@@ -85,7 +94,6 @@ const Modal = ({ ffmpegRef, videoDuration, isModalOpen, setIsModalOpen, transfor
     }, [trimThumbnailPercent]);
 
     useEffect(() => {
-        console.log(showTrimThumbnail);
         if (showTrimThumbnail) {
             const videoLengthInSeconds = getVideoDurationInSeconds(videoDuration);
             const thumbnailTimeInSeconds = (trimThumbnailPercent/100) * videoLengthInSeconds;
@@ -99,7 +107,6 @@ const Modal = ({ ffmpegRef, videoDuration, isModalOpen, setIsModalOpen, transfor
                     setTrimThumbnail(dataUrl);
                     ffmpegRef.current.deleteFile('output_image.png');
                 });
-                console.log(await ffmpegRef.current.listDir("."));
             });
         }
     }, [showTrimThumbnail]);
@@ -153,7 +160,7 @@ const Modal = ({ ffmpegRef, videoDuration, isModalOpen, setIsModalOpen, transfor
                 from: fromTimeStamp,
                 to: toTimeStamp
             }
-        })
+        });
     };
 
     const getModalViews = (transformationType: TransformationTypes) => {
@@ -161,6 +168,7 @@ const Modal = ({ ffmpegRef, videoDuration, isModalOpen, setIsModalOpen, transfor
             case "Convert":
                 return (
                     <>
+
                         <div>
                             Convert video from
                             <Styles.CodeContainer>.{videoFormat}</Styles.CodeContainer>
@@ -199,7 +207,7 @@ const Modal = ({ ffmpegRef, videoDuration, isModalOpen, setIsModalOpen, transfor
                         <StyledButton onClick={() => addTransformation({type: "Mute"})}>Mute Video</StyledButton>
                         <Command ffmpegCommand={`ffmpeg -i input.${videoFormat} -vcodec copy -an output.${videoFormat}`}/>
                     </>
-                )
+                );
             case "Trim":
                 return (
                     <>

@@ -1,6 +1,5 @@
 import { fetchFile, toBlobURL } from '@ffmpeg/util';
 import React, { ChangeEvent, ReactElement, useEffect, useRef, useState } from "react";
-import { FileData } from "@ffmpeg/ffmpeg/dist/esm/types";
 import { StyledButton } from "../../App";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import {CheckSVG, Flex, GitHubSVG} from "../common";
