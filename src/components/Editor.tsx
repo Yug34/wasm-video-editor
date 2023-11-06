@@ -11,7 +11,7 @@ import { getVideoDurationAsString, subtractVideoDuration } from '../utils';
 import * as Styles from "../App.Styles";
 
 // TODO: Maybe just process everything as MP4, then convert back to original/other formats
-// TODO: There'a an ffmpeg.load error
+// TODO: There's an ffmpeg.load error
 
 // NOTE: order should be trim -> compress -> grayscale/filters -> whatever (and then finally convert
 
@@ -201,6 +201,7 @@ const Editor = () => {
                         setIsModalOpen={setIsModalOpen}
                         transformations={transformations}
                         setTransformations={setTransformations}
+                        ffmpegRef={ffmpegRef}
                     />
                     <Flex style={{ flexDirection: "column" }}>
                         <Flex style={{padding: "1rem"}}>

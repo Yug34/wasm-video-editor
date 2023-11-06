@@ -130,11 +130,10 @@ export const SliderContainer = styled.div`
     margin-bottom: 2rem;
 
     & > div > .sign {
-        opacity: 0;
         position: absolute;
         margin-left: -19px;
         z-index:3;
-        background-color: black;
+        background-color: transparent;
         color: #fff;
         width: 28px;
         height: 28px;
@@ -147,10 +146,6 @@ export const SliderContainer = styled.div`
     & > div > .sign > span {
         font-size: 14px;
         line-height: 24px;
-    }
-      
-    & > div > .sign {
-        opacity: 1;
     }
 `;
 

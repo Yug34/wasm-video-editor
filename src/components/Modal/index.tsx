@@ -1,10 +1,12 @@
-import React, {ChangeEvent, SetStateAction, useEffect, useRef, useState} from "react";
+import React, {SetStateAction, useEffect, useRef, useState} from "react";
 import * as Styles from "./Modal.styles";
 import {Codec, Format, Transformation, TransformationTypes, VideoDuration} from "../../types";
 import {FORMAT_NAMES, FORMATS, TRANSFORMATION_NAMES} from "../../contants";
 import {StyledButton} from "../../App";
 import styled from "styled-components";
-import { getVideoDurationFromSeconds, getVideoDurationInSeconds } from "../../utils";
+import {getVideoDurationAsString, getVideoDurationFromSeconds, getVideoDurationInSeconds} from "../../utils";
+import {FFmpeg} from "@ffmpeg/ffmpeg";
+import {FileData} from "@ffmpeg/ffmpeg/dist/esm/types";
 
 type ModalProps = {
     videoDuration: VideoDuration;
@@ -13,6 +15,7 @@ type ModalProps = {
     setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
     transformations: Transformation[];
     setTransformations: React.Dispatch<SetStateAction<Transformation[]>>;
+    ffmpegRef: React.MutableRefObject<FFmpeg>;
 }
 
 interface CommandProps {
@@ -55,16 +58,52 @@ const Command = ({ffmpegCommand}: CommandProps) => {
     )
 };
 
-const Modal = (props: ModalProps) => {
-    const { videoDuration, isModalOpen, setIsModalOpen, transformations, setTransformations, videoFormat } = props;
+const Modal = ({ ffmpegRef, videoDuration, isModalOpen, setIsModalOpen, transformations, setTransformations, videoFormat }: ModalProps) => {
     const [currentTransformation, setCurrentTransformation] = useState<TransformationTypes>("Convert");
     const [videoConvertFormat, setVideoConvertFormat] = useState<Format>(FORMAT_NAMES.filter(format => format !== videoFormat)[0] as Format);
     const [videoConvertCodec, setVideoConvertCodec] = useState<Codec>(FORMATS[videoConvertFormat].codecs[0] as Codec);
     
-    const [trimFromPercent, setTrimFromPercent] = useState(30);
-    const [trimToPercent, setTrimToPercent] = useState(60);
+    const [trimFromPercent, setTrimFromPercent] = useState<number>(30);
+    const [trimToPercent, setTrimToPercent] = useState<number>(60);
+    const [trimThumbnailPercent, setTrimThumbnailPercent] = useState<number>(45);
+    const [showTrimThumbnail, setShowTrimThumbnail] = useState<boolean>(false);
+    const [trimThumbnail, setTrimThumbnail] = useState<string | null>(null);
+
     const inputRefFrom = useRef<HTMLInputElement | null>(null);
     const inputRefTo = useRef<HTMLInputElement | null>(null);
+    const inputRefThumbnail = useRef<HTMLInputElement | null>(null);
+
+    useEffect(() => {
+        setShowTrimThumbnail(false);
+
+        setTimeout(() => {
+            setShowTrimThumbnail(true);
+        }, 1000);
+    }, [trimThumbnailPercent]);
+
+    useEffect(() => {
+        console.log(showTrimThumbnail);
+        if (showTrimThumbnail) {
+            const videoLengthInSeconds = getVideoDurationInSeconds(videoDuration);
+            const thumbnailTimeInSeconds = (trimThumbnailPercent/100) * videoLengthInSeconds;
+            const thumbnailTimestamp = getVideoDurationFromSeconds(thumbnailTimeInSeconds);
+
+            console.log(getVideoDurationAsString(thumbnailTimestamp));
+
+            ffmpegRef.current.exec(`-i video.${videoFormat} -ss 00:00:01 -frames 1 output_image.png`.split(" ")).then(async () => {
+                // ffmpegRef.current.exec(`-i video.${videoFormat} -vf "select=gte(n\,40)" -vframes 1 output_image.png`.split(" ")).then(async () => {
+                //     ffmpegRef.current.readFile('output_image.png').then((data) => {
+                //         const dataUrl = URL.createObjectURL(
+                //             new Blob([data], { type: 'image/png' })
+                //         );
+                //         console.log(data);
+                //         setTrimThumbnail(dataUrl);
+                //         ffmpegRef.current.deleteFile('output_image.png');
+                //     });
+                console.log(await ffmpegRef.current.listDir("."));
+            });
+        }
+    }, [showTrimThumbnail]);
 
     useEffect(() => {
         setVideoConvertCodec(FORMATS[videoConvertFormat].codecs[0] as Codec);
@@ -87,10 +126,17 @@ const Modal = (props: ModalProps) => {
     }
 
     const handleTrimToChange = (e: any) => {
-        const inputValue = parseInt(e.target.value)
+        const inputValue = parseInt(e.target.value);
         const value = Math.max(inputValue, trimFromPercent + 1);
 
         setTrimToPercent(value);
+    }
+
+    const handleTrimThumbChange = (e: any) => {
+        const inputValue = parseInt(e.target.value);
+        const value = Math.min(Math.max(inputValue, trimFromPercent + 1), trimToPercent - 1);
+
+        setTrimThumbnailPercent(value);
     }
 
     const addTrimTransformation = () => {
@@ -158,6 +204,11 @@ const Modal = (props: ModalProps) => {
             case "Trim":
                 return (
                     <>
+                        {trimThumbnail && (
+                            <div style={{border: "1px solid white", borderRadius: "1rem", padding: "1rem", width: "fit-content"}}>
+                                <img src={trimThumbnail} alt={"thumbnail"} />
+                            </div>
+                        )}
                         <Styles.SliderContainer>
                             <Styles.Slider>
                                 <Styles.EmptyBar style={{width: `${trimFromPercent}%`, left: "0"}}/>
@@ -165,11 +216,15 @@ const Modal = (props: ModalProps) => {
                                 <Styles.RangeBar id="range" style={{left: `${trimFromPercent - 1}%`, right: `${100 - trimToPercent + 1}%`}}/>
                                 <Styles.Thumb style={{left: `calc(${trimFromPercent}% + ${14 * (100 - trimFromPercent)/100}px)`}}/>
                                 <Styles.Thumb style={{left: `calc(${trimToPercent}% + ${14 * (100 - trimToPercent)/100}px)`}}/>
+                                <Styles.Thumb style={{left: `calc(${trimThumbnailPercent}% + ${14 * (100 - trimThumbnailPercent)/100}px)`}}/>
                                 <div className="sign" style={{left: `calc(${trimFromPercent}% + ${14 * (100 - trimFromPercent)/100}px)`, top: "-31px"}}>
                                     <span id="value">{trimFromPercent}</span>
                                 </div>
                                 <div className="sign" style={{left: `calc(${trimToPercent}% + ${14 * (100 - trimToPercent)/100}px)`, top: "28px"}}>
                                     <span id="value">{trimToPercent}</span>
+                                </div>
+                                <div className="sign" style={{left: `calc(${trimThumbnailPercent}% + ${14 * (100 - trimThumbnailPercent)/100}px)`, top: "28px"}}>
+                                    <span id="value">{trimThumbnailPercent}</span>
                                 </div>
                             </Styles.Slider>
 
@@ -183,6 +238,12 @@ const Modal = (props: ModalProps) => {
                                 type="range" max="100" min="0" step="1"
                                 ref={inputRefTo} value={trimToPercent} 
                                 onChange={handleTrimToChange}
+                            />
+
+                            <Styles.SliderInput
+                                type="range" max="100" min="0" step="1"
+                                ref={inputRefThumbnail} value={trimThumbnailPercent}
+                                onChange={handleTrimThumbChange}
                             />
                         </Styles.SliderContainer>
 
