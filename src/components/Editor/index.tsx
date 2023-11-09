@@ -14,11 +14,6 @@ import * as Styles from "./Editor.Styles";
 
 // NOTE: order should be trim -> compress -> grayscale/filters -> whatever (and then finally convert
 
-// p 2 p -> handled
-// p 2 u -> todo
-// u 2 p -> handled
-// u 2 u -> todo
-
 interface StepProps {
     completed: boolean;
     clickHandler?(): void;
@@ -55,6 +50,8 @@ const Editor = () => {
 
     const [transformations, setTransformations] = useState<Transformation[]>([]);
     const [isTransformComplete, setIsTransformComplete] = useState<boolean>(false);
+
+    const [sourceVideoURL, setSourceVideoURL] = useState<string | null>(null);
 
     const load = async () => {
         const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.4/dist/umd';
@@ -101,7 +98,8 @@ const Editor = () => {
         await ffmpeg.exec([`-i`, `input.${format}`]);
 
         ffmpeg.readFile(`input.${format}`).then((videoData) => {
-            videoRef.current!.src = URL.createObjectURL(new Blob([videoData], {type: `video/${format}`}));
+            const videoURL = URL.createObjectURL(new Blob([videoData], {type: `video/${format}`}));
+            setSourceVideoURL(videoURL);
         });
 
         setVideo(fileData);
@@ -174,7 +172,8 @@ const Editor = () => {
         })).then(async () => {
             const ffmpeg = ffmpegRef.current;
             ffmpeg.readFile(`input.${format}`).then((data) => {
-                videoRef.current!.src = URL.createObjectURL(new Blob([data], {type: `video/${format}`}));
+                const videoURL = URL.createObjectURL(new Blob([data], {type: `video/${format}`}));
+                setSourceVideoURL(videoURL);
             });
             setIsTransformComplete(true);
         });
@@ -183,7 +182,7 @@ const Editor = () => {
     const VideoPlayer = ({isUnplayable}: {isUnplayable: boolean}) => {
         return (
             <Styles.VideoOverlay $isUnplayable={isUnplayable}>
-                <video ref={videoRef} controls />
+                <video ref={videoRef} controls src={sourceVideoURL!} />
                 {isUnplayable && <div style={{position: "absolute"}}>Unplayable</div>}
             </Styles.VideoOverlay>
         );
@@ -201,6 +200,7 @@ const Editor = () => {
                         transformations={transformations}
                         setTransformations={setTransformations}
                         ffmpegRef={ffmpegRef}
+                        sourceVideoURL={sourceVideoURL!}
                     />
                     <Flex style={{ flexDirection: "column" }}>
                         <Flex style={{padding: "1rem"}}>

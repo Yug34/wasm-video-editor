@@ -15,6 +15,7 @@ type ModalProps = {
     transformations: Transformation[];
     setTransformations: React.Dispatch<SetStateAction<Transformation[]>>;
     ffmpegRef: React.MutableRefObject<FFmpeg>;
+    sourceVideoURL: string;
 }
 
 interface CommandProps {
@@ -57,7 +58,7 @@ const Command = ({ffmpegCommand}: CommandProps) => {
     );
 };
 
-const Modal = ({ ffmpegRef, videoDuration, isModalOpen, setIsModalOpen, transformations, setTransformations, videoFormat }: ModalProps) => {
+const Modal = ({ ffmpegRef, videoDuration, isModalOpen, setIsModalOpen, transformations, setTransformations, videoFormat, sourceVideoURL }: ModalProps) => {
     const [currentTransformation, setCurrentTransformation] = useState<TransformationTypes>("Convert");
     const [videoConvertFormat, setVideoConvertFormat] = useState<Format>(FORMAT_NAMES.filter(format => format !== videoFormat)[0] as Format);
     const [videoConvertCodec, setVideoConvertCodec] = useState<Codec>(FORMATS[videoConvertFormat].codecs[0] as Codec);
@@ -65,12 +66,12 @@ const Modal = ({ ffmpegRef, videoDuration, isModalOpen, setIsModalOpen, transfor
     const [trimFromPercent, setTrimFromPercent] = useState<number>(30);
     const [trimToPercent, setTrimToPercent] = useState<number>(60);
     const [trimThumbnailPercent, setTrimThumbnailPercent] = useState<number>(45);
-    const [showTrimThumbnail, setShowTrimThumbnail] = useState<boolean>(false);
-    const [trimThumbnail, setTrimThumbnail] = useState<string | null>(null);
 
     const inputRefFrom = useRef<HTMLInputElement | null>(null);
     const inputRefTo = useRef<HTMLInputElement | null>(null);
     const inputRefThumbnail = useRef<HTMLInputElement | null>(null);
+
+    const thumbnailVideoRef = useRef<HTMLVideoElement>(null);
 
     const checkTransformationsArrayFor = (trType: TransformationTypes): boolean => {
         for (const transformation of transformations) {
@@ -81,35 +82,6 @@ const Modal = ({ ffmpegRef, videoDuration, isModalOpen, setIsModalOpen, transfor
 
         return false;
     };
-
-
-    useEffect(() => {
-        setShowTrimThumbnail(false);
-
-        const debouncedGetVideoFrame = setTimeout(() => {
-            setShowTrimThumbnail(true);
-        }, 500);
-
-        return () => clearTimeout(debouncedGetVideoFrame);
-    }, [trimThumbnailPercent]);
-
-    useEffect(() => {
-        if (showTrimThumbnail) {
-            const videoLengthInSeconds = getVideoDurationInSeconds(videoDuration);
-            const thumbnailTimeInSeconds = (trimThumbnailPercent/100) * videoLengthInSeconds;
-            const thumbnailTimestamp = getVideoDurationFromSeconds(thumbnailTimeInSeconds);
-
-            ffmpegRef.current.exec(`-ss ${getVideoDurationAsString(thumbnailTimestamp)} -i input.${videoFormat} -frames:v 1 output_image.png`.split(" ")).then(async () => {
-                ffmpegRef.current.readFile('output_image.png').then((data) => {
-                    const dataUrl = URL.createObjectURL(
-                        new Blob([data], { type: 'image/png' })
-                    );
-                    setTrimThumbnail(dataUrl);
-                    ffmpegRef.current.deleteFile('output_image.png');
-                });
-            });
-        }
-    }, [showTrimThumbnail]);
 
     useEffect(() => {
         setVideoConvertCodec(FORMATS[videoConvertFormat].codecs[0] as Codec);
@@ -211,16 +183,9 @@ const Modal = ({ ffmpegRef, videoDuration, isModalOpen, setIsModalOpen, transfor
             case "Trim":
                 return (
                     <>
-                        {trimThumbnail && (
-                            <div style={{position: "relative", border: "1px solid white", width: "fit-content"}}>
-                                {!showTrimThumbnail && (
-                                    <Styles.LoaderContainer>
-                                        <Styles.Loader />
-                                    </Styles.LoaderContainer>
-                                )}
-                                <img src={trimThumbnail} alt={"thumbnail"} />
-                            </div>
-                        )}
+                        <div style={{position: "relative", border: "1px solid white", width: "fit-content"}}>
+                            <video ref={thumbnailVideoRef} src={sourceVideoURL} controls />
+                        </div>
                         <Styles.SliderContainer>
                             <Styles.Slider>
                                 <Styles.EmptyBar style={{width: `${trimFromPercent}%`, left: "0"}}/>
