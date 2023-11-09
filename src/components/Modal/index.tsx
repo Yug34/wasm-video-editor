@@ -114,6 +114,9 @@ const Modal = ({ ffmpegRef, videoDuration, isModalOpen, setIsModalOpen, transfor
         const inputValue = parseInt(e.target.value);
         const value = Math.min(Math.max(inputValue, trimFromPercent + 1), trimToPercent - 1);
 
+        const videoDurationInSeconds = getVideoDurationInSeconds(videoDuration); 
+        thumbnailVideoRef.current!.currentTime = videoDurationInSeconds * (value / 100);
+
         setTrimThumbnailPercent(value);
     }
 
@@ -184,7 +187,7 @@ const Modal = ({ ffmpegRef, videoDuration, isModalOpen, setIsModalOpen, transfor
                 return (
                     <>
                         <div style={{position: "relative", border: "1px solid white", width: "fit-content"}}>
-                            <video ref={thumbnailVideoRef} src={sourceVideoURL} controls />
+                            <video ref={thumbnailVideoRef} src={sourceVideoURL} />
                         </div>
                         <Styles.SliderContainer>
                             <Styles.Slider>
