@@ -74,7 +74,7 @@ export const TransformationsContainer = styled(Flex)`
   border-right: 1px solid white;
 `;
 
-export const TransformationOption = styled.div`
+export const TransformationOption = styled.div<{$selected: boolean;}>`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -83,12 +83,25 @@ export const TransformationOption = styled.div`
   padding: 0.75rem 0.5rem;
   cursor: pointer;
 
-  div {
-    background: transparent;
-  }
-  
+  background: ${(props) => props.$selected ? "white" : "transparent"};
+  color: ${(props) => props.$selected ? "black" : "white"};
+
   &:hover {
-    background: #333333;
+    background: ${(props) => props.$selected ? "#999999" : "#333333"};
+    // color: ${(props) => props.$selected ? "black" : "white"};
+  }
+`;
+
+export const RemoveTransformationCTA = styled.div<{$selected: boolean;}>`
+  background: ${(props) => props.$selected ? "white" : "black"};
+  color: ${(props) => props.$selected ? "black" : "white"};
+  border: 1px solid ${(props) => props.$selected ? "black" : "white"};
+  padding: 0.5rem;
+  border-radius: 12px;
+
+  &:hover {
+    background: ${(props) => props.$selected ? "black" : "white"};
+    color: ${(props) => props.$selected ? "white" : "black"};
   }
 `;
 

@@ -91,7 +91,8 @@ const Modal = ({ ffmpegRef, videoDuration, isModalOpen, setIsModalOpen, transfor
         setTransformations(prevTransformations => [...prevTransformations, transformation])
     }
 
-    const removeTransformation = (transformationType: TransformationTypes) => {
+    const removeTransformation = (e: React.MouseEvent<HTMLDivElement>, transformationType: TransformationTypes) => {
+        e.stopPropagation();
         setTransformations(prevTransformations => prevTransformations.filter((transformation) => transformation.type !== transformationType))
     }    
 
@@ -245,15 +246,18 @@ const Modal = ({ ffmpegRef, videoDuration, isModalOpen, setIsModalOpen, transfor
                 <Styles.TransformationsContainer>
                     {TRANSFORMATION_NAMES.map((transformation, index) => (
                         <React.Fragment key={transformation}>
-                            <Styles.TransformationOption onClick={() => setCurrentTransformation(transformation)}>
-                                <div>{transformation}</div>
+                            <Styles.TransformationOption 
+                                $selected={currentTransformation === transformation} 
+                                onClick={() => setCurrentTransformation(transformation)}
+                            >
+                                {transformation}
                                 {checkTransformationsArrayFor(transformation) && (
-                                    <div
-                                        style={{border: "1px solid white", padding: "0.5rem", borderRadius: "12px"}}
-                                        onClick={() => removeTransformation(transformation)}
+                                    <Styles.RemoveTransformationCTA
+                                        $selected={currentTransformation === transformation}
+                                        onClick={(e) => removeTransformation(e, transformation)}
                                     >
-                                        Click to remove
-                                    </div>
+                                        Remove
+                                    </Styles.RemoveTransformationCTA>
                                 )}
                             </Styles.TransformationOption>
                             <Styles.Line/>
