@@ -76,10 +76,16 @@ export const TransformationsContainer = styled(Flex)`
 
 export const TransformationOption = styled.div`
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   column-gap: 1rem;
   background: black;
   padding: 0.75rem 0.5rem;
   cursor: pointer;
+
+  div {
+    background: transparent;
+  }
   
   &:hover {
     background: #333333;

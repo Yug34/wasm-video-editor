@@ -88,9 +88,12 @@ const Modal = ({ ffmpegRef, videoDuration, isModalOpen, setIsModalOpen, transfor
     }, [videoConvertFormat]);
 
     const addTransformation = (transformation: Transformation) => {
-        console.log(transformation);
         setTransformations(prevTransformations => [...prevTransformations, transformation])
     }
+
+    const removeTransformation = (transformationType: TransformationTypes) => {
+        setTransformations(prevTransformations => prevTransformations.filter((transformation) => transformation.type !== transformationType))
+    }    
 
     const closeModal = () => {
         setIsModalOpen(false);
@@ -243,7 +246,15 @@ const Modal = ({ ffmpegRef, videoDuration, isModalOpen, setIsModalOpen, transfor
                     {TRANSFORMATION_NAMES.map((transformation, index) => (
                         <React.Fragment key={transformation}>
                             <Styles.TransformationOption onClick={() => setCurrentTransformation(transformation)}>
-                                {transformation}
+                                <div>{transformation}</div>
+                                {checkTransformationsArrayFor(transformation) && (
+                                    <div
+                                        style={{border: "1px solid white", padding: "0.5rem", borderRadius: "12px"}}
+                                        onClick={() => removeTransformation(transformation)}
+                                    >
+                                        Click to remove
+                                    </div>
+                                )}
                             </Styles.TransformationOption>
                             <Styles.Line/>
                         </React.Fragment>
