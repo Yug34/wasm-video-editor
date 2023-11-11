@@ -20,12 +20,13 @@ interface StepProps {
     text?: string;
     completedText: string;
     svg: ReactElement;
+    completedSVG?: ReactElement;
 }
-const Step = ({completed, clickHandler = () => {}, completedText, text = "", svg}: StepProps) => {
+const Step = ({completed, clickHandler = () => {}, completedText, text = "", svg, completedSVG}: StepProps) => {
     return (
         <Styles.Step $completed={completed} onClick={completed ? () => {} : clickHandler}>
             <>
-                {svg}
+                {completed ? completedSVG : svg}
                 {completed ? completedText : text}
             </>
         </Styles.Step>
@@ -52,6 +53,18 @@ const Editor = () => {
     const [isTransformComplete, setIsTransformComplete] = useState<boolean>(false);
 
     const [sourceVideoURL, setSourceVideoURL] = useState<string | null>(null);
+
+    const downloadVideo = () => {
+        var link = document.createElement("a");
+        link.download = `output.${videoFormat}`;
+        link.target = "_blank";
+
+        link.href = sourceVideoURL!;
+        document.body.appendChild(link);
+        link.click();
+
+        document.body.removeChild(link);
+    }
 
     const load = async () => {
         const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.4/dist/umd';
@@ -208,41 +221,44 @@ const Editor = () => {
                                 <VideoPlayer isUnplayable={isUnplayable} />
                                 <Styles.StepsContainer>
                                     <Step completed={true} completedText={"Added Video"} svg={<CheckSVG/>} />
-                                    <Styles.Step $completed={transformations.length > 0} onClick={transformations.length > 0 ? () => {} : openModal}>
-                                        {transformations.length > 0 ? (
-                                            <>
-                                                <CheckSVG/>
-                                                Added a transformation
-                                            </>
-                                        ) : (
-                                            <>
-                                                <svg stroke="currentColor" fill="currentColor" strokeWidth="0S" viewBox="0 0 1024 1024" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8Z"/>
-                                                    <path d="M192 474h672q8 0 8 8v60q0 8-8 8H160q-8 0-8-8v-60q0-8 8-8Z"/>
-                                                </svg>
-                                                Add a transformation
-                                            </>
-                                        )}
-                                    </Styles.Step>
-                                    <Styles.Step $completed={isTransformComplete} onClick={isTransformComplete ? () => {} : transform}>
-                                        {isTransformComplete ? (
-                                            <>
-                                                <CheckSVG/>
-                                                Processed!
-                                            </>
-                                        ) : (
-                                            <>
-                                                <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 1024 1024" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M912 190h-69.9c-9.8 0-19.1 4.5-25.1 12.2L404.7 724.5 207 474a32 32 0 0 0-25.1-12.2H112c-6.7 0-10.4 7.7-6.3 12.9l273.9 347c12.8 16.2 37.4 16.2 50.3 0l488.4-618.9c4.1-5.1.4-12.8-6.3-12.8z"/>
-                                                </svg>
-                                                Click to transform
-                                            </>
-                                        )}
-                                    </Styles.Step>
-                                    <Styles.Step $completed={false}>
-                                        <CheckSVG/>
-                                        Added file
-                                    </Styles.Step>
+                                    <Step 
+                                        completed={transformations.length > 0}
+                                        clickHandler={openModal}
+                                        completedText='Added a Transformation'
+                                        text='Add a Transformation'
+                                        completedSVG={<CheckSVG/>}
+                                        svg={
+                                            <svg stroke="currentColor" fill="currentColor" strokeWidth="0S" viewBox="0 0 1024 1024" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8Z"/>
+                                                <path d="M192 474h672q8 0 8 8v60q0 8-8 8H160q-8 0-8-8v-60q0-8 8-8Z"/>
+                                            </svg>
+                                        }
+                                    />
+                                    <Step
+                                        completed={isTransformComplete}
+                                        clickHandler={transform}
+                                        completedSVG={<CheckSVG/>}
+                                        svg={
+                                            <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 1024 1024" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M912 190h-69.9c-9.8 0-19.1 4.5-25.1 12.2L404.7 724.5 207 474a32 32 0 0 0-25.1-12.2H112c-6.7 0-10.4 7.7-6.3 12.9l273.9 347c12.8 16.2 37.4 16.2 50.3 0l488.4-618.9c4.1-5.1.4-12.8-6.3-12.8z"/>
+                                            </svg>
+                                        }
+                                        text='Click to transform'
+                                        completedText='Processed!'
+                                    />
+                                    <Step
+                                        completed={false}
+                                        text='Download'
+                                        clickHandler={downloadVideo}
+                                        completedText='Downloaded'
+                                        svg={
+                                            <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M4.75 17.25a.75.75 0 0 1 .75.75v2.25c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V18a.75.75 0 0 1 1.5 0v2.25A1.75 1.75 0 0 1 18.25 22H5.75A1.75 1.75 0 0 1 4 20.25V18a.75.75 0 0 1 .75-.75Z"/>
+                                                <path d="M5.22 9.97a.749.749 0 0 1 1.06 0l4.97 4.969V2.75a.75.75 0 0 1 1.5 0v12.189l4.97-4.969a.749.749 0 1 1 1.06 1.06l-6.25 6.25a.749.749 0 0 1-1.06 0l-6.25-6.25a.749.749 0 0 1 0-1.06Z"/>
+                                            </svg>
+                                        }
+                                        completedSVG={<CheckSVG/>}
+                                    />
                                     <Styles.StepsLine />
                                 </Styles.StepsContainer>
                             </Flex>

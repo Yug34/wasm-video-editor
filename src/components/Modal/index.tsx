@@ -93,7 +93,7 @@ const Modal = ({ ffmpegRef, videoDuration, isModalOpen, setIsModalOpen, transfor
 
     const removeTransformation = (e: React.MouseEvent<HTMLDivElement>, transformationType: TransformationTypes) => {
         e.stopPropagation();
-        setTransformations(prevTransformations => prevTransformations.filter((transformation) => transformation.type !== transformationType))
+        setTransformations(prevTransformations => prevTransformations.filter((transformation) => transformation.type !== transformationType));
     }    
 
     const closeModal = () => {
