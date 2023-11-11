@@ -62,6 +62,10 @@ export const TransformationsContainer = styled(Flex)`
   min-width: 300px;
   height: 100%;
   border-left: 1px solid white;
+
+  @media(max-width: 1024px) {
+    display: none;
+  }
 `;
 
 export const StepsContainer = styled(Flex)`
@@ -70,6 +74,11 @@ export const StepsContainer = styled(Flex)`
   align-items: center;
   position: relative;
   height: 20px;
+
+  @media(max-width: 768px) {
+    flex-direction: column;
+    row-gap: 2rem;
+  }
 `;
 
 export const Step = styled.div<{$completed?: boolean}>`
@@ -92,6 +101,11 @@ export const StepsLine = styled.div`
   height: 1px;
   width: 80%;
   position: absolute;
+
+  @media(max-width: 768px) {
+    height: 200px;
+    width: 1px;
+  }
 `;
 
 export const HeadingContainer = styled.div`
@@ -108,6 +122,10 @@ export const HeadingContainer = styled.div`
   
   h3 {
     font-weight: 500;
+  }
+
+  @media(max-width: 768px) {
+    padding: 2rem;
   }
 `;
 
@@ -133,6 +151,14 @@ export const InfoContainer = styled(Flex)`
   max-width: 750px;
   margin-top: 1.5rem;
   padding: 1rem;
+
+  @media(max-width: 768px) {
+    margin-top: 2rem;
+    flex-direction: column;
+    row-gap: 1rem;
+    max-width: 90%;
+    padding: 2rem 0 0 0;
+  }
 `;
 
 export const InfoLine = styled.div`
@@ -140,6 +166,13 @@ export const InfoLine = styled.div`
   background: white;
   width: 1px;
   margin: 0 1rem;
+
+  @media(max-width: 768px) {
+    align-self: center;
+    height: 1px;
+    width: 90%;
+    margin: 0;
+  }
 `;
 
 export const InfoCard = styled(Flex)`
