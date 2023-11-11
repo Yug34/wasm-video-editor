@@ -22,7 +22,7 @@ interface StepProps {
     svg: ReactElement;
     completedSVG?: ReactElement;
 }
-const Step = ({completed, clickHandler = () => {}, completedText, text = "", svg, completedSVG}: StepProps) => {
+const Step = ({completed, clickHandler = () => {}, completedText, text = "", svg, completedSVG = <CheckSVG/>}: StepProps) => {
     return (
         <Styles.Step $completed={completed} onClick={completed ? () => {} : clickHandler}>
             <>
@@ -53,6 +53,7 @@ const Editor = () => {
     const [isTransformComplete, setIsTransformComplete] = useState<boolean>(false);
 
     const [sourceVideoURL, setSourceVideoURL] = useState<string | null>(null);
+    const [isDownloaded, setIsDownloaded] = useState<boolean>(false);
 
     const downloadVideo = () => {
         var link = document.createElement("a");
@@ -64,6 +65,8 @@ const Editor = () => {
         link.click();
 
         document.body.removeChild(link);
+
+        setIsDownloaded(true);
     }
 
     const load = async () => {
@@ -220,13 +223,11 @@ const Editor = () => {
                             <Flex style={{ flexDirection: "column" }}>
                                 <VideoPlayer isUnplayable={isUnplayable} />
                                 <Styles.StepsContainer>
-                                    <Step completed={true} completedText={"Added Video"} svg={<CheckSVG/>} />
                                     <Step 
                                         completed={transformations.length > 0}
                                         clickHandler={openModal}
                                         completedText='Added a Transformation'
                                         text='Add a Transformation'
-                                        completedSVG={<CheckSVG/>}
                                         svg={
                                             <svg stroke="currentColor" fill="currentColor" strokeWidth="0S" viewBox="0 0 1024 1024" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8Z"/>
@@ -237,17 +238,16 @@ const Editor = () => {
                                     <Step
                                         completed={isTransformComplete}
                                         clickHandler={transform}
-                                        completedSVG={<CheckSVG/>}
                                         svg={
-                                            <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 1024 1024" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M912 190h-69.9c-9.8 0-19.1 4.5-25.1 12.2L404.7 724.5 207 474a32 32 0 0 0-25.1-12.2H112c-6.7 0-10.4 7.7-6.3 12.9l273.9 347c12.8 16.2 37.4 16.2 50.3 0l488.4-618.9c4.1-5.1.4-12.8-6.3-12.8z"/>
+                                            <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 16 16" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M9.5 2.672a.5.5 0 1 0 1 0V.843a.5.5 0 0 0-1 0v1.829Zm4.5.035A.5.5 0 0 0 13.293 2L12 3.293a.5.5 0 1 0 .707.707L14 2.707ZM7.293 4A.5.5 0 1 0 8 3.293L6.707 2A.5.5 0 0 0 6 2.707L7.293 4Zm-.621 2.5a.5.5 0 1 0 0-1H4.843a.5.5 0 1 0 0 1h1.829Zm8.485 0a.5.5 0 1 0 0-1h-1.829a.5.5 0 0 0 0 1h1.829ZM13.293 10A.5.5 0 1 0 14 9.293L12.707 8a.5.5 0 1 0-.707.707L13.293 10ZM9.5 11.157a.5.5 0 0 0 1 0V9.328a.5.5 0 0 0-1 0v1.829Zm1.854-5.097a.5.5 0 0 0 0-.706l-.708-.708a.5.5 0 0 0-.707 0L8.646 5.94a.5.5 0 0 0 0 .707l.708.708a.5.5 0 0 0 .707 0l1.293-1.293Zm-3 3a.5.5 0 0 0 0-.706l-.708-.708a.5.5 0 0 0-.707 0L.646 13.94a.5.5 0 0 0 0 .707l.708.708a.5.5 0 0 0 .707 0L8.354 9.06Z"/>
                                             </svg>
                                         }
-                                        text='Click to transform'
+                                        text='Transform video'
                                         completedText='Processed!'
                                     />
                                     <Step
-                                        completed={false}
+                                        completed={isDownloaded}
                                         text='Download'
                                         clickHandler={downloadVideo}
                                         completedText='Downloaded'
@@ -257,7 +257,6 @@ const Editor = () => {
                                                 <path d="M5.22 9.97a.749.749 0 0 1 1.06 0l4.97 4.969V2.75a.75.75 0 0 1 1.5 0v12.189l4.97-4.969a.749.749 0 1 1 1.06 1.06l-6.25 6.25a.749.749 0 0 1-1.06 0l-6.25-6.25a.749.749 0 0 1 0-1.06Z"/>
                                             </svg>
                                         }
-                                        completedSVG={<CheckSVG/>}
                                     />
                                     <Styles.StepsLine />
                                 </Styles.StepsContainer>

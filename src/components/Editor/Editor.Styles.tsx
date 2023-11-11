@@ -73,6 +73,7 @@ export const StepsContainer = styled(Flex)`
 `;
 
 export const Step = styled.div<{$completed?: boolean}>`
+  cursor: pointer;
   margin: 0 auto;
   display: flex;
   height: 4rem;
