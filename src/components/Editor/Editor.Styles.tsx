@@ -18,7 +18,7 @@ export const VideoOverlay = styled.div<{$isUnplayable: boolean}>`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 500px;
+  height: 100%;
   margin: 0 auto;
   padding: 20px;
   border: ${(props) => props.$isUnplayable ? "1px solid white" : "none"};
@@ -81,7 +81,7 @@ export const StepsContainer = styled(Flex)`
   }
 `;
 
-export const Step = styled.div<{$completed?: boolean}>`
+export const Step = styled.div<{$completed?: boolean; disabled?: boolean;}>`
   cursor: pointer;
   margin: 0 auto;
   display: flex;

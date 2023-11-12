@@ -195,10 +195,10 @@ const Modal = ({ ffmpegRef, videoDuration, isModalOpen, setIsModalOpen, transfor
                         </div>
                         <Styles.SliderContainer>
                             <Styles.Slider>
-                                <Styles.EmptyBar style={{width: `${trimFromPercent}%`, left: "0"}}/>
-                                <Styles.EmptyBar style={{width: `${100 - trimToPercent + 1}%`, right: "0", top: "-1px"}}/>
-                                <Styles.RangeBar id="range" style={{left: `${trimFromPercent - 1}%`, right: `${100 - trimToPercent + 1}%`}}/>
-                                <Styles.Thumb style={{left: `calc(${trimFromPercent}% + ${14 * (100 - trimFromPercent)/100}px)`}}/>
+                                <Styles.EmptyBar style={{width: `${trimFromPercent + 1}%`, left: "0"}}/>
+                                <Styles.EmptyBar style={{width: `${100 - trimToPercent}%`, right: "0", top: "-1px"}}/>
+                                <Styles.RangeBar id="range" style={{left: `${trimFromPercent + (trimFromPercent / 100)}%`, right: `${100 - trimToPercent}%`}}/>
+                                <Styles.Thumb style={{left: `calc(${trimFromPercent - 1}% + ${14 * (100 - trimFromPercent)/100}px)`}}/>
                                 <Styles.Thumb style={{left: `calc(${trimToPercent}% + ${14 * (100 - trimToPercent)/100}px)`}}/>
                                 <Styles.Thumb style={{left: `calc(${trimThumbnailPercent}% + ${14 * (100 - trimThumbnailPercent)/100}px)`}}/>
                                 <div className="sign" style={{left: `calc(${trimFromPercent}% + ${14 * (100 - trimFromPercent)/100}px)`, top: "-31px"}}>

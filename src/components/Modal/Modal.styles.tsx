@@ -137,7 +137,7 @@ export const EmptyBar = styled.div`
 export const RangeBar = styled.div`
     position: absolute;
     left: 0;
-    height: 14px;
+    height: 13px;
     background-color: white;
 `;
 

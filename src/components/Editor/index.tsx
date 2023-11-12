@@ -16,13 +16,14 @@ import * as Styles from "./Editor.Styles";
 
 interface StepProps {
     completed: boolean;
+    enabled?: boolean;
     clickHandler?(): void;
     text?: string;
     completedText: string;
     svg: ReactElement;
     completedSVG?: ReactElement;
 }
-const Step = ({completed, clickHandler = () => {}, completedText, text = "", svg, completedSVG = <CheckSVG/>}: StepProps) => {
+const Step = ({completed, clickHandler = () => {}, completedText, text = "", svg, completedSVG = <CheckSVG/>, enabled}: StepProps) => {
     return (
         <Styles.Step $completed={completed} onClick={completed ? () => {} : clickHandler}>
             <>
@@ -224,10 +225,8 @@ const Editor = () => {
                                 <VideoPlayer isUnplayable={isUnplayable} />
                                 <Styles.StepsContainer>
                                     <Step 
-                                        completed={transformations.length > 0}
-                                        clickHandler={openModal}
-                                        completedText='Added a Transformation'
-                                        text='Add a Transformation'
+                                        completed={transformations.length > 0} clickHandler={openModal}
+                                        completedText='Added a Transformation' text='Add a Transformation'
                                         svg={
                                             <svg stroke="currentColor" fill="currentColor" strokeWidth="0S" viewBox="0 0 1024 1024" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8Z"/>
@@ -236,21 +235,17 @@ const Editor = () => {
                                         }
                                     />
                                     <Step
-                                        completed={isTransformComplete}
-                                        clickHandler={transform}
+                                        completed={isTransformComplete} clickHandler={transform}
                                         svg={
                                             <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 16 16" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M9.5 2.672a.5.5 0 1 0 1 0V.843a.5.5 0 0 0-1 0v1.829Zm4.5.035A.5.5 0 0 0 13.293 2L12 3.293a.5.5 0 1 0 .707.707L14 2.707ZM7.293 4A.5.5 0 1 0 8 3.293L6.707 2A.5.5 0 0 0 6 2.707L7.293 4Zm-.621 2.5a.5.5 0 1 0 0-1H4.843a.5.5 0 1 0 0 1h1.829Zm8.485 0a.5.5 0 1 0 0-1h-1.829a.5.5 0 0 0 0 1h1.829ZM13.293 10A.5.5 0 1 0 14 9.293L12.707 8a.5.5 0 1 0-.707.707L13.293 10ZM9.5 11.157a.5.5 0 0 0 1 0V9.328a.5.5 0 0 0-1 0v1.829Zm1.854-5.097a.5.5 0 0 0 0-.706l-.708-.708a.5.5 0 0 0-.707 0L8.646 5.94a.5.5 0 0 0 0 .707l.708.708a.5.5 0 0 0 .707 0l1.293-1.293Zm-3 3a.5.5 0 0 0 0-.706l-.708-.708a.5.5 0 0 0-.707 0L.646 13.94a.5.5 0 0 0 0 .707l.708.708a.5.5 0 0 0 .707 0L8.354 9.06Z"/>
                                             </svg>
                                         }
-                                        text='Transform video'
-                                        completedText='Processed!'
+                                        text='Transform video' completedText='Processed!'
                                     />
                                     <Step
-                                        completed={isDownloaded}
-                                        text='Download'
-                                        clickHandler={downloadVideo}
-                                        completedText='Downloaded'
+                                        completed={isDownloaded} clickHandler={downloadVideo}
+                                        text='Download' completedText='Downloaded'
                                         svg={
                                             <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M4.75 17.25a.75.75 0 0 1 .75.75v2.25c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V18a.75.75 0 0 1 1.5 0v2.25A1.75 1.75 0 0 1 18.25 22H5.75A1.75 1.75 0 0 1 4 20.25V18a.75.75 0 0 1 .75-.75Z"/>
