@@ -72,9 +72,11 @@ export const TransformationsContainer = styled(Flex)`
   flex-direction: column;
   width: 400px;
   border-right: 1px solid white;
+  border-radius: 1rem;
+  box-shadow: -10px 0px 5px 0px rgba(255,255,255,0.15) inset;
 `;
 
-export const TransformationOption = styled.div<{$selected: boolean;}>`
+export const TransformationOption = styled.div<{$selected: boolean; $isFirst: boolean;}>`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -82,6 +84,9 @@ export const TransformationOption = styled.div<{$selected: boolean;}>`
   background: black;
   padding: 0.75rem 0.5rem;
   cursor: pointer;
+
+  border-top-left-radius: ${(props) => props.$isFirst ? "1rem" : "0"};
+  border-top-right-radius: ${(props) => props.$isFirst ? "1rem" : "0"};
 
   background: ${(props) => props.$selected ? "white" : "transparent"};
   color: ${(props) => props.$selected ? "black" : "white"};

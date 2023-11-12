@@ -246,7 +246,8 @@ const Modal = ({ ffmpegRef, videoDuration, isModalOpen, setIsModalOpen, transfor
                 <Styles.TransformationsContainer>
                     {TRANSFORMATION_NAMES.map((transformation, index) => (
                         <React.Fragment key={transformation}>
-                            <Styles.TransformationOption 
+                            <Styles.TransformationOption
+                                $isFirst={index === 0}
                                 $selected={currentTransformation === transformation} 
                                 onClick={() => setCurrentTransformation(transformation)}
                             >
