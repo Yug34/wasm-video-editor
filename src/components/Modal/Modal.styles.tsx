@@ -34,6 +34,13 @@ export const ModalView = styled(Flex)`
   padding: 4rem 2rem;
 `;
 
+export const CommandHLine = styled.span`
+  height: 100%;
+  width: 1px;
+  background: white;
+  margin: 0 1rem;
+`;
+
 export const CommandContainer = styled.div`
   display: flex;
   justify-content: flex-start;

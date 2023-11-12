@@ -24,6 +24,11 @@ export const VideoOverlay = styled.div<{$isUnplayable: boolean}>`
   border: ${(props) => props.$isUnplayable ? "1px solid white" : "none"};
   border-radius: 1rem;
 
+  @media (max-width: 1024px) {
+    width: 100%;
+    height: auto;
+  }
+
   video {
     opacity: ${(props) => props.$isUnplayable ? "0.5" : "1"};
     width: 100%;
@@ -78,6 +83,8 @@ export const StepsContainer = styled(Flex)`
   @media(max-width: 768px) {
     flex-direction: column;
     row-gap: 2rem;
+    margin-top: 0;
+    height: auto;
   }
 `;
 

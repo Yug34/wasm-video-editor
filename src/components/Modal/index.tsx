@@ -22,13 +22,6 @@ interface CommandProps {
     ffmpegCommand: string;
 }
 
-const CommandHLine = styled.span`
-  height: 100%;
-  width: 1px;
-  background: white;
-  margin: 0 1rem;
-`;
-
 const Command = ({ffmpegCommand}: CommandProps) => {
     const [isCopied, setIsCopied] = useState<boolean>(false);
 
@@ -42,9 +35,9 @@ const Command = ({ffmpegCommand}: CommandProps) => {
             });
         }}>
             <div>Command</div>
-            <CommandHLine />
+            <Styles.CommandHLine />
             <code>{ffmpegCommand}</code>
-            <CommandHLine />
+            <Styles.CommandHLine />
             {!isCopied ? (
                 <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 32 32" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg">
                     <path d="M 4 4 L 4 24 L 11 24 L 11 22 L 6 22 L 6 6 L 18 6 L 18 7 L 20 7 L 20 4 Z M 12 8 L 12 28 L 28 28 L 28 8 Z M 14 10 L 26 10 L 26 26 L 14 26 Z"/>
