@@ -146,18 +146,22 @@ const Editor = () => {
     }
 
     const grayscale = async (format: Format) => {
+        console.log("grayscale")
         const ffmpeg = ffmpegRef.current;
         await ffmpeg.exec(`-i input.${format} -vf format=gray output.${format}`.split(" "));
+        // await ffmpeg.exec(`-i input.${format} -vf hue=s=0 output.${format}`.split(" "));
         await ffmpeg.rename(`output.${format}`, `input.${format}`);
     }
 
     const mute = async (format: Format) => {
+        console.log("mute")
         const ffmpeg = ffmpegRef.current;
         await ffmpeg.exec(`-i input.${format} -vcodec copy -an output.${format}`.split(" "));
         await ffmpeg.rename(`output.${format}`, `input.${format}`);
     }
 
     const trim = async (format: Format, from: VideoDuration, to: VideoDuration) => {
+        console.log("trim")
         const startTimestamp = getVideoDurationAsString(from);
 
         // WHAT? Why do I need to subtract twice for webms? This makes no sense.
@@ -175,25 +179,28 @@ const Editor = () => {
 
         const format = hasTranscode ? transcodeSteps[0].transcode!.to : videoFormat;
 
-        await Promise.all(transformations.map(async transformation => {
+        for (const transformation of transformations) {
             switch (transformation.type) {
                 case "Convert":
-                    return await transcode(transformation.transcode!.to, transformation.transcode!.codec);
+                    await transcode(transformation.transcode!.to, transformation.transcode!.codec);
+                    break;
                 case "Grayscale":
-                    return await grayscale(format!);
+                    await grayscale(format!);
+                    break;
                 case "Mute":
-                    return await mute(format!);
+                    await mute(format!);
+                    break;
                 case "Trim":
-                    return await trim(format!, transformation.trim!.from, transformation.trim!.to);
+                    await trim(format!, transformation.trim!.from, transformation.trim!.to);
+                    break;
             }
-        })).then(async () => {
-            const ffmpeg = ffmpegRef.current;
-            ffmpeg.readFile(`input.${format}`).then((data) => {
-                const videoURL = URL.createObjectURL(new Blob([data], {type: `video/${format}`}));
-                setSourceVideoURL(videoURL);
-            });
-            setIsTransformComplete(true);
-        });
+        }
+    
+        const ffmpeg = ffmpegRef.current;
+        const data = await ffmpeg.readFile(`input.${format}`);
+        const videoURL = URL.createObjectURL(new Blob([data], { type: `video/${format}` }));
+        setSourceVideoURL(videoURL);
+        setIsTransformComplete(true);
     }
 
     const VideoPlayer = ({isUnplayable}: {isUnplayable: boolean}) => {
