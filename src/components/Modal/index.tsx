@@ -190,7 +190,7 @@ const Modal = ({ videoDuration, isModalOpen, setIsModalOpen, transformations, se
                 return (
                     <>
                         <Styles.TrimVideoContainer>
-                            <Styles.TrimVideoPreview controls ref={thumbnailVideoRef} src={sourceVideoURL+"#t=,2"} />
+                            <Styles.TrimVideoPreview controls ref={thumbnailVideoRef} src={sourceVideoURL+`#t=${videoDuration.toTimeStampAtPercent(trimFromPercent)},${videoDuration.toTimeStampAtPercent(trimToPercent)}`} />
                         </Styles.TrimVideoContainer>
                         <Styles.SliderContainer>
                             <Styles.Slider>
@@ -199,7 +199,7 @@ const Modal = ({ videoDuration, isModalOpen, setIsModalOpen, transformations, se
                                 <Styles.RangeBar id="range" style={{left: `${trimFromPercent + (trimFromPercent / 100)}%`, right: `${100 - trimToPercent}%`}}/>
                                 <Styles.Thumb style={{left: `calc(${trimFromPercent - 1}% + ${14 * (100 - trimFromPercent)/100}px)`}}/>
                                 <Styles.Thumb style={{left: `calc(${trimToPercent}% + ${14 * (100 - trimToPercent)/100}px)`}}/>
-                                <Styles.Thumb style={{left: `calc(${trimThumbnailPercent}% + ${14 * (100 - trimThumbnailPercent)/100}px)`}}/>
+                                <Styles.Thumb style={{left: `calc(${trimThumbnailPercent - 0.5}% + ${14 * (100 - trimThumbnailPercent)/100}px)`}}/>
                                 <div className="sign" style={{left: `calc(${trimFromPercent}% + ${14 * (100 - trimFromPercent)/100}px)`, top: "-31px"}}>
                                     <span id="value">{videoDuration.toShortStringAtPercent(trimFromPercent)}</span>
                                 </div>

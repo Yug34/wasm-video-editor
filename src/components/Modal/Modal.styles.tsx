@@ -61,6 +61,7 @@ export const CodeContainer = styled.code`
 `;
 
 export const ModalCloseCTA = styled.button`
+  z-index: 99;
   position: absolute;
   top: 2rem;
   right: 2rem;
@@ -312,9 +313,10 @@ export const Loader = styled.span`
 
 export const TrimVideoContainer = styled.div`
   border: 1px solid white;
-  width: fit-content;
-  height: fit-content;
   margin-bottom: 2rem;
+  
+  width: 100%;
+  height: auto;
 `;
 
 export const TrimVideoPreview = styled.video`

@@ -23,6 +23,14 @@ export class VideoDurationWrapper {
         return this.hours * 3600 + this.minutes * 60 + this.seconds;
     }
 
+    toTimeStamp(): string {
+        const hh = this.hours < 10 ? `0${this.hours}` : `${this.hours}`;
+        const mm = this.minutes < 10 ? `0${this.minutes}` : `${this.minutes}`;
+        const ss = this.seconds < 10 ? `0${this.seconds}` : `${this.seconds}`;
+
+        return `${hh}:${mm}:${ss}`;
+    }
+
     toString(): string {
         const hh = this.hours < 10 ? `0${this.hours}` : `${this.hours}`;
         const mm = this.minutes < 10 ? `0${this.minutes}` : `${this.minutes}`;
@@ -57,8 +65,12 @@ export class VideoDurationWrapper {
 
     toShortStringAtPercent(percentage: number): string {
         const videoDurationAtPercent = VideoDurationWrapper.fromSeconds(this.toSeconds() * (percentage / 100));
-
         return videoDurationAtPercent.toShortString();
+    }
+
+    toTimeStampAtPercent(percentage: number): string {
+        const videoDurationAtPercent = VideoDurationWrapper.fromSeconds(this.toSeconds() * (percentage / 100));
+        return videoDurationAtPercent.toTimeStamp();
     }
 
     static subtract(to: VideoDuration, from: VideoDuration): VideoDurationWrapper {
