@@ -6,7 +6,7 @@ import {CheckSVG, Flex, GitHubSVG} from "../common";
 import Modal from "../Modal";
 import { Codec, Format, Transformation, VideoDuration } from "../../types";
 import { CODECS } from "../../contants";
-import { getVideoDurationAsString, subtractVideoDuration } from '../../utils';
+import {VideoDurationWrapper} from '../../utils';
 import * as Styles from "./Editor.Styles";
 
 // TODO: Maybe just process everything as MP4, then convert back to original/other formats
@@ -44,7 +44,7 @@ const Editor = () => {
     const ffmpegRef = useRef(new FFmpeg());
 
     const [videoFormat, setVideoFormat] = useState<Format | null>(null);
-    const [videoDuration, setVideoDuration] = useState<VideoDuration | null>(null);
+    const [videoDuration, setVideoDuration] = useState<VideoDurationWrapper | null>(null);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
     const [isUnplayable, setIsUnplayable] = useState<boolean>(false);
@@ -107,11 +107,12 @@ const Editor = () => {
                 const splitMessage = msgToMatch.split(":");
                 let timeStamps = splitMessage.splice(1, splitMessage.length);
                 timeStamps = timeStamps.map((timeStamp) => timeStamp.trim());
-                setVideoDuration({
+                const videoDuration: VideoDuration = {
                     hours: parseInt(timeStamps[0]),
                     minutes: parseInt(timeStamps[1]),
                     seconds: parseInt(timeStamps[2])
-                });
+                }
+                setVideoDuration(VideoDurationWrapper.fromVideoDuration(videoDuration));
             }
         });
 
@@ -166,11 +167,11 @@ const Editor = () => {
 
     const trim = async (format: Format, from: VideoDuration, to: VideoDuration) => {
         console.log("trim")
-        const startTimestamp = getVideoDurationAsString(from);
+        const startTimestamp = VideoDurationWrapper.fromVideoDuration(from).toString();
 
         // WHAT? Why do I need to subtract twice for webms? This makes no sense.
         // TODO: Here's the official docs: https://trac.ffmpeg.org/wiki/Seeking
-        const endTimeStamp = format === "webm" ? getVideoDurationAsString(subtractVideoDuration(subtractVideoDuration(to, from), from)) : getVideoDurationAsString(subtractVideoDuration(to, from));
+        const endTimeStamp = format === "webm" ? VideoDurationWrapper.subtract(VideoDurationWrapper.subtract(to, from), from).toString() : VideoDurationWrapper.subtract(to, from).toString();
 
         const ffmpeg = ffmpegRef.current;
         await ffmpeg.exec(`-ss ${startTimestamp} -i input.${format} -t ${endTimeStamp} -c copy output.${videoFormat}`.split(" "))

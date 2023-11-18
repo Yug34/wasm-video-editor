@@ -1,17 +1,15 @@
 import React, {SetStateAction, useEffect, useRef, useState} from "react";
 import * as Styles from "./Modal.styles";
-import {Codec, Format, Transformation, TransformationTypes, VideoDuration} from "../../types";
+import {Codec, Format, Transformation, TransformationTypes} from "../../types";
 import {FORMAT_NAMES, FORMATS, TRANSFORMATION_NAMES} from "../../contants";
 import {StyledButton} from "../../App";
 import {
-    getVideoDurationAsString,
-    getVideoDurationFromSeconds,
-    getVideoDurationInSeconds,
-    roundFloat
+    roundFloat,
+    VideoDurationWrapper
 } from "../../utils";
 
 type ModalProps = {
-    videoDuration: VideoDuration;
+    videoDuration: VideoDurationWrapper;
     isModalOpen: boolean;
     videoFormat: Format;
     setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -121,20 +119,18 @@ const Modal = ({ videoDuration, isModalOpen, setIsModalOpen, transformations, se
         const inputValue = parseFloat(e.target.value);
         const value = Math.min(Math.max(inputValue, trimFromPercent + 0.01), trimToPercent - 0.01);
 
-        const videoDurationInSeconds = getVideoDurationInSeconds(videoDuration); 
+        const videoDurationInSeconds = videoDuration.toSeconds();
         thumbnailVideoRef.current!.currentTime = videoDurationInSeconds * (value / 100);
 
         setTrimThumbnailPercent(value);
     }
 
     const addTrimTransformation = () => {
-        const videoLengthInSeconds = getVideoDurationInSeconds(videoDuration);
+        const toSeconds = (trimToPercent/100) * videoDuration.toSeconds();
+        const toTimeStamp = VideoDurationWrapper.fromSeconds(toSeconds);
 
-        const toSeconds = (trimToPercent/100) * videoLengthInSeconds;
-        const toTimeStamp = getVideoDurationFromSeconds(toSeconds);
-
-        const fromSeconds = (trimFromPercent/100) * videoLengthInSeconds;
-        const fromTimeStamp = getVideoDurationFromSeconds(fromSeconds);
+        const fromSeconds = (trimFromPercent/100) * videoDuration.toSeconds();
+        const fromTimeStamp = VideoDurationWrapper.fromSeconds(fromSeconds);
 
         addTransformation({
             type: "Trim",
