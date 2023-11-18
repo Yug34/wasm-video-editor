@@ -309,3 +309,15 @@ export const Loader = styled.span`
     }
   }
 `;
+
+export const TrimVideoContainer = styled.div`
+  border: 1px solid white;
+  width: fit-content;
+  height: fit-content;
+  margin-bottom: 2rem;
+`;
+
+export const TrimVideoPreview = styled.video`
+  width: 100%;
+  height: 100%;
+`;

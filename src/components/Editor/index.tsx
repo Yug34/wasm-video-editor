@@ -70,6 +70,10 @@ const Editor = () => {
         setIsDownloaded(true);
     }
 
+    useEffect(() => {
+        load();
+    }, []);
+
     const load = async () => {
         const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.4/dist/umd';
         const ffmpeg = ffmpegRef.current;
@@ -223,7 +227,6 @@ const Editor = () => {
                         setIsModalOpen={setIsModalOpen}
                         transformations={transformations}
                         setTransformations={setTransformations}
-                        ffmpegRef={ffmpegRef}
                         sourceVideoURL={sourceVideoURL!}
                     />
                     <Flex style={{ flexDirection: "column" }}>
@@ -304,7 +307,6 @@ const Editor = () => {
                     <Styles.StyledLabel htmlFor="file-upload" className="custom-file-upload">{video ? "Loading ffmpeg" : "Add a video to start"}</Styles.StyledLabel>
                     <input
                         style={{display: "none"}} id="file-upload" type="file" ref={fileInputRef}
-                        onClick={video ? () => {} : load}
                         onChange={initialize}
                     />
                     <Styles.InfoContainer>
