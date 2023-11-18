@@ -201,13 +201,13 @@ const Modal = ({ videoDuration, isModalOpen, setIsModalOpen, transformations, se
                                 <Styles.Thumb style={{left: `calc(${trimToPercent}% + ${14 * (100 - trimToPercent)/100}px)`}}/>
                                 <Styles.Thumb style={{left: `calc(${trimThumbnailPercent}% + ${14 * (100 - trimThumbnailPercent)/100}px)`}}/>
                                 <div className="sign" style={{left: `calc(${trimFromPercent}% + ${14 * (100 - trimFromPercent)/100}px)`, top: "-31px"}}>
-                                    <span id="value">{roundFloat(trimFromPercent)}</span>
+                                    <span id="value">{videoDuration.toShortStringAtPercent(trimFromPercent)}</span>
                                 </div>
                                 <div className="sign" style={{left: `calc(${trimToPercent}% + ${14 * (100 - trimToPercent)/100}px)`, top: "28px"}}>
-                                    <span id="value">{roundFloat(trimToPercent)}</span>
+                                    <span id="value">{videoDuration.toShortStringAtPercent(trimToPercent)}</span>
                                 </div>
                                 <div className="sign" style={{left: `calc(${trimThumbnailPercent}% + ${14 * (100 - trimThumbnailPercent)/100}px)`, top: "28px"}}>
-                                    <span id="value">{roundFloat(trimThumbnailPercent)}</span>
+                                    <span id="value">{videoDuration.toShortStringAtPercent(trimThumbnailPercent)}</span>
                                 </div>
                             </Styles.Slider>
 

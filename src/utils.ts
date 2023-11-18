@@ -28,13 +28,37 @@ export class VideoDurationWrapper {
         const mm = this.minutes < 10 ? `0${this.minutes}` : `${this.minutes}`;
         const ss = this.seconds < 10 ? `0${this.seconds}` : `${this.seconds}`;
 
-        return `${hh}:${mm}:${ss}`;
+        if (hh === "00") {
+            if (mm === "00") {
+                return `${ss}s`
+            } else {
+                return `${mm}:${ss}`
+            }
+        } else {
+            return `${hh}:${mm}:${ss}`
+        }
     }
 
-    toStringAtPercent(percentage: number): string {
+    toShortString(): string {
+        const hh = this.hours < 10 ? `0${this.hours}` : `${this.hours}`;
+        const mm = this.minutes < 10 ? `0${this.minutes}` : `${this.minutes}`;
+        const ss = this.seconds < 10 ? `0${this.seconds}` : `${this.seconds}`;
+
+        if (hh === "00") {
+            if (mm === "00") {
+                return `${roundFloat(parseFloat(ss))}s`
+            } else {
+                return `${mm}:${ss}`
+            }
+        } else {
+            return `${hh}:${mm}:${ss}`
+        }
+    }
+
+    toShortStringAtPercent(percentage: number): string {
         const videoDurationAtPercent = VideoDurationWrapper.fromSeconds(this.toSeconds() * (percentage / 100));
 
-        return videoDurationAtPercent.toString();
+        return videoDurationAtPercent.toShortString();
     }
 
     static subtract(to: VideoDuration, from: VideoDuration): VideoDurationWrapper {
