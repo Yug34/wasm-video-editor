@@ -141,98 +141,113 @@ const Modal = ({ videoDuration, isModalOpen, setIsModalOpen, transformations, se
         });
     };
 
+    const ConvertVideoView = () => {
+        return (
+            <>
+                <div>
+                    Convert video from
+                    <Styles.CodeContainer>.{videoFormat}</Styles.CodeContainer>
+                    to:
+                    <select
+                        value={videoConvertFormat}
+                        onChange={e => {setVideoConvertFormat(e.target.value as Format)}}
+                    >
+                        {FORMAT_NAMES.filter(format => format !== videoFormat).map(format => (
+                            <option key={format} value={format}>.{format}</option>
+                        ))}
+                    </select>
+                    <select
+                        value={videoConvertCodec}
+                        onChange={e => {setVideoConvertCodec(e.target.value as Codec)}}
+                    >
+                        {FORMATS[videoConvertFormat].codecs.map(codec => (
+                            <option key={codec} value={codec}>{codec}</option>
+                        ))}
+                    </select>
+                </div>
+
+                <StyledButton onClick={() => addTransformation({type: "Convert", transcode: {to: videoConvertFormat, codec: videoConvertCodec}})}>Convert</StyledButton>
+            </>
+        );
+    };
+
+    const GrayscaleView = () => {
+        return (
+            <>
+                <StyledButton onClick={() => addTransformation({type: "Grayscale"})}>Add Grayscale</StyledButton>
+                <Command ffmpegCommand={`ffmpeg -i input.${videoFormat} -vf format=gray output.${videoFormat}`}/>
+            </>
+        );
+    };
+
+    const MuteView = () => {
+        return (
+            <>
+                <StyledButton onClick={() => addTransformation({type: "Mute"})}>Mute Video</StyledButton>
+                <Command ffmpegCommand={`ffmpeg -i input.${videoFormat} -vcodec copy -an output.${videoFormat}`}/>
+            </>
+        )
+    }
+
+    const TrimView = () => {
+        return (
+            <>
+                <Styles.TrimVideoContainer>
+                    <Styles.TrimVideoPreview controls ref={thumbnailVideoRef} src={sourceVideoURL+`#t=${videoDuration.toTimeStampAtPercent(trimFromPercent)},${videoDuration.toTimeStampAtPercent(trimToPercent)}`} />
+                </Styles.TrimVideoContainer>
+                <Styles.SliderContainer>
+                    <Styles.Slider>
+                        <Styles.EmptyBar style={{width: `${trimFromPercent + 1}%`, left: "0"}}/>
+                        <Styles.EmptyBar style={{width: `${100 - trimToPercent}%`, right: "0", top: "-1px"}}/>
+                        <Styles.RangeBar id="range" style={{left: `${trimFromPercent + (trimFromPercent / 100)}%`, right: `${100 - trimToPercent}%`}}/>
+                        <Styles.Thumb style={{left: `calc(${trimFromPercent - 1}% + ${14 * (100 - trimFromPercent)/100}px)`}}/>
+                        <Styles.Thumb style={{left: `calc(${trimToPercent}% + ${14 * (100 - trimToPercent)/100}px)`}}/>
+                        <Styles.Thumb style={{left: `calc(${trimThumbnailPercent - 0.5}% + ${14 * (100 - trimThumbnailPercent)/100}px)`}}/>
+                        <div className="sign" style={{left: `calc(${trimFromPercent}% + ${14 * (100 - trimFromPercent)/100}px)`, top: "-31px"}}>
+                            <span id="value">{videoDuration.toShortStringAtPercent(trimFromPercent)}</span>
+                        </div>
+                        <div className="sign" style={{left: `calc(${trimToPercent}% + ${14 * (100 - trimToPercent)/100}px)`, top: "28px"}}>
+                            <span id="value">{videoDuration.toShortStringAtPercent(trimToPercent)}</span>
+                        </div>
+                        <div className="sign" style={{left: `calc(${trimThumbnailPercent}% + ${14 * (100 - trimThumbnailPercent)/100}px)`, top: "28px"}}>
+                            <span id="value">{videoDuration.toShortStringAtPercent(trimThumbnailPercent)}</span>
+                        </div>
+                    </Styles.Slider>
+
+                    <Styles.SliderInput
+                        type="range" max="100" min="0" step=".01"
+                        ref={inputRefFrom} value={trimFromPercent}
+                        onChange={handleTrimFromChange}
+                    />
+
+                    <Styles.SliderInput
+                        type="range" max="100" min="0" step=".01"
+                        ref={inputRefTo} value={trimToPercent}
+                        onChange={handleTrimToChange}
+                    />
+
+                    <Styles.SliderInput
+                        type="range" max="100" min="0" step=".01"
+                        ref={inputRefThumbnail} value={trimThumbnailPercent}
+                        onChange={handleTrimThumbChange}
+                    />
+                </Styles.SliderContainer>
+
+                <StyledButton onClick={addTrimTransformation}>Trim</StyledButton>
+            </>
+        );
+    };
+
     const getModalViews = (transformationType: TransformationTypes) => {
         switch (transformationType) {
             case "Convert":
-                return (
-                    <>
-
-                        <div>
-                            Convert video from
-                            <Styles.CodeContainer>.{videoFormat}</Styles.CodeContainer>
-                            to:
-                            <select
-                                value={videoConvertFormat}
-                                onChange={e => {setVideoConvertFormat(e.target.value as Format)}}
-                            >
-                                {FORMAT_NAMES.filter(format => format !== videoFormat).map(format => (
-                                    <option key={format} value={format}>.{format}</option>
-                                ))}
-                            </select>
-                            <select
-                                value={videoConvertCodec}
-                                onChange={e => {setVideoConvertCodec(e.target.value as Codec)}}
-                            >
-                                {FORMATS[videoConvertFormat].codecs.map(codec => (
-                                    <option key={codec} value={codec}>{codec}</option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <StyledButton onClick={() => addTransformation({type: "Convert", transcode: {to: videoConvertFormat, codec: videoConvertCodec}})}>Convert</StyledButton>
-                    </>
-                );
+                return <ConvertVideoView />
             case "Grayscale":
-                return (
-                    <>
-                        <StyledButton onClick={() => addTransformation({type: "Grayscale"})}>Add Grayscale</StyledButton>
-                        <Command ffmpegCommand={`ffmpeg -i input.${videoFormat} -vf format=gray output.${videoFormat}`}/>
-                    </>
-                );
+                return <GrayscaleView />
             case "Mute":
-                return (
-                    <>
-                        <StyledButton onClick={() => addTransformation({type: "Mute"})}>Mute Video</StyledButton>
-                        <Command ffmpegCommand={`ffmpeg -i input.${videoFormat} -vcodec copy -an output.${videoFormat}`}/>
-                    </>
-                );
+                return <MuteView />
             case "Trim":
-                return (
-                    <>
-                        <Styles.TrimVideoContainer>
-                            <Styles.TrimVideoPreview controls ref={thumbnailVideoRef} src={sourceVideoURL+`#t=${videoDuration.toTimeStampAtPercent(trimFromPercent)},${videoDuration.toTimeStampAtPercent(trimToPercent)}`} />
-                        </Styles.TrimVideoContainer>
-                        <Styles.SliderContainer>
-                            <Styles.Slider>
-                                <Styles.EmptyBar style={{width: `${trimFromPercent + 1}%`, left: "0"}}/>
-                                <Styles.EmptyBar style={{width: `${100 - trimToPercent}%`, right: "0", top: "-1px"}}/>
-                                <Styles.RangeBar id="range" style={{left: `${trimFromPercent + (trimFromPercent / 100)}%`, right: `${100 - trimToPercent}%`}}/>
-                                <Styles.Thumb style={{left: `calc(${trimFromPercent - 1}% + ${14 * (100 - trimFromPercent)/100}px)`}}/>
-                                <Styles.Thumb style={{left: `calc(${trimToPercent}% + ${14 * (100 - trimToPercent)/100}px)`}}/>
-                                <Styles.Thumb style={{left: `calc(${trimThumbnailPercent - 0.5}% + ${14 * (100 - trimThumbnailPercent)/100}px)`}}/>
-                                <div className="sign" style={{left: `calc(${trimFromPercent}% + ${14 * (100 - trimFromPercent)/100}px)`, top: "-31px"}}>
-                                    <span id="value">{videoDuration.toShortStringAtPercent(trimFromPercent)}</span>
-                                </div>
-                                <div className="sign" style={{left: `calc(${trimToPercent}% + ${14 * (100 - trimToPercent)/100}px)`, top: "28px"}}>
-                                    <span id="value">{videoDuration.toShortStringAtPercent(trimToPercent)}</span>
-                                </div>
-                                <div className="sign" style={{left: `calc(${trimThumbnailPercent}% + ${14 * (100 - trimThumbnailPercent)/100}px)`, top: "28px"}}>
-                                    <span id="value">{videoDuration.toShortStringAtPercent(trimThumbnailPercent)}</span>
-                                </div>
-                            </Styles.Slider>
-
-                            <Styles.SliderInput
-                                type="range" max="100" min="0" step=".01"
-                                ref={inputRefFrom} value={trimFromPercent} 
-                                onChange={handleTrimFromChange}
-                            />
-                            
-                            <Styles.SliderInput 
-                                type="range" max="100" min="0" step=".01"
-                                ref={inputRefTo} value={trimToPercent} 
-                                onChange={handleTrimToChange}
-                            />
-
-                            <Styles.SliderInput
-                                type="range" max="100" min="0" step=".01"
-                                ref={inputRefThumbnail} value={trimThumbnailPercent}
-                                onChange={handleTrimThumbChange}
-                            />
-                        </Styles.SliderContainer>
-
-                        <StyledButton onClick={addTrimTransformation}>Trim</StyledButton>
-                    </>
-                );
+                return <TrimView />
         }
     };
 

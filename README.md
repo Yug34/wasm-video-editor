@@ -1,1 +1,5 @@
-Excuse the extremely bad code, I'll refactor it later.
+# Client-sided video editor
+
+[//]: # (TODO:)
+[//]: # (### Core components of this project:)
+
