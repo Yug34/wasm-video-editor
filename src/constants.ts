@@ -17,6 +17,7 @@ export const CODECS: Record<Codec, CodecInfo> = {
         },
         ffmpegLib: "libvpx"
     },
+    // TODO: Probably just remove this
     vp9: {
         name: "VP9",
         compressionRange: {

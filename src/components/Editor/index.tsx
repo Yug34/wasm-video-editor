@@ -5,7 +5,7 @@ import { FFmpeg } from "@ffmpeg/ffmpeg";
 import {CheckSVG, Flex, GitHubSVG} from "../common";
 import Modal from "../Modal";
 import { Codec, Format, Transformation, VideoDuration } from "../../types";
-import { CODECS } from "../../contants";
+import { CODECS } from "../../constants";
 import {VideoDurationWrapper} from '../../utils';
 import * as Styles from "./Editor.Styles";
 
