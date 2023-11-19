@@ -136,9 +136,9 @@ const Editor = () => {
         }
     }, [video, isLoaded]);
 
-    const transcode = async (toFormat: Format, toCodec: Codec) => {
+    const transcode = async (toFormat: Format, toCodec: Codec, fromFormat?: Format) => {
         const ffmpeg = ffmpegRef.current;
-        await ffmpeg.exec(`-i input.${videoFormat} -threads 4 -strict -2 -c:v ${CODECS[toCodec].ffmpegLib} input.${toFormat}`.split(" "));
+        await ffmpeg.exec(`-i input.${fromFormat ?? videoFormat} -threads 4 -strict -2 -c:v ${CODECS[toCodec].ffmpegLib} input.${toFormat}`.split(" "));
 
         if (toFormat === "wmv" || toFormat === "avi") {
             setIsUnplayable(true);
@@ -146,16 +146,26 @@ const Editor = () => {
             setIsUnplayable(false);
         }
 
-        await ffmpeg.deleteFile(`input.${videoFormat}`);
+        await ffmpeg.deleteFile(`input.${fromFormat ?? videoFormat}`);
         setVideoFormat(toFormat);
     }
 
     const grayscale = async (format: Format) => {
         console.log("grayscale")
         const ffmpeg = ffmpegRef.current;
-        await ffmpeg.exec(`-i input.${format} -vf format=gray output.${format}`.split(" "));
-        // await ffmpeg.exec(`-i input.${format} -vf hue=s=0 output.${format}`.split(" "));
-        await ffmpeg.rename(`output.${format}`, `input.${format}`);
+
+        if (format === "webm") {
+            await transcode("mp4", "h264");
+            await ffmpeg.exec(`-i input.mp4 -vf format=gray output.mp4`.split(" "));
+            await ffmpeg.deleteFile("input.mp4");
+            console.log(await ffmpeg.listDir("."));
+            await ffmpeg.rename("output.mp4", "input.mp4");
+            console.log(await ffmpeg.listDir("."));
+            await transcode(format, "vp8", "mp4");
+        } else {
+            await ffmpeg.exec(`-i input.${format} -vf format=gray output.${format}`.split(" "));
+            await ffmpeg.rename(`output.${format}`, `input.${format}`);
+        }
     }
 
     const mute = async (format: Format) => {
