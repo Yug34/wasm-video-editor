@@ -2,7 +2,7 @@ import * as Styles from "../Modal.styles";
 import {Codec, Format, Transformation} from "../../../types";
 import {FORMAT_NAMES, FORMATS} from "../../../constants";
 import {StyledButton} from "../../../App";
-import React, {SetStateAction, useState} from "react";
+import React, {useState} from "react";
 import {VideoDurationWrapper} from "../../../utils";
 
 interface ConvertVideoViewProps {

@@ -27,7 +27,7 @@ export type Transformation = {
     }
 }
 
-export type Codec = "h264" | "vp8" | "vp9" | "windows" | "mpeg4";
+export type Codec = "h264" | "vp8" | "windows" | "mpeg4";
 
 export type CodecInfo = {
     name: string;

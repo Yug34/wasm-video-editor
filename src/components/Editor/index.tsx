@@ -315,16 +315,18 @@ const Editor = () => {
                     <h3>
                         Welcome to the video-editor where <i>your files are not uploaded anywhere!</i> ✨
                     </h3>
-                    <Styles.StyledLabel htmlFor="file-upload" className="custom-file-upload">{video ? "Loading ffmpeg" : "Add a video to start"}</Styles.StyledLabel>
-                    <input
-                        style={{display: "none"}} id="file-upload" type="file" ref={fileInputRef}
-                        onChange={initialize}
-                    />
+                    <Styles.LandingPageInputContainer>
+                        <Styles.StyledLabel htmlFor="file-upload" className="custom-file-upload">{video ? "Loading ffmpeg" : "Add a video to start"}</Styles.StyledLabel>
+                        <input
+                            style={{display: "none"}} id="file-upload" type="file" ref={fileInputRef}
+                            onChange={initialize}
+                        />
+                    </Styles.LandingPageInputContainer>
                     <Styles.InfoContainer>
                         <Styles.InfoCard>
                             <Styles.InfoHeading>How does it work?</Styles.InfoHeading>
-                            <div>All of the files you add here are kept only with you, and are never sent to any server anywhere.</div>
-                            <div>The video transformations occur on your computer locally through WebAssembly.</div>
+                            <div>The video you add here is kept only with you, and never sent to a server anywhere.</div>
+                            <div>The edits occur on your computer locally through WebAssembly.</div>
                         </Styles.InfoCard>
                         <Styles.InfoLine />
                         <Styles.InfoCard>

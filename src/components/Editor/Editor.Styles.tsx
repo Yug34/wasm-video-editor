@@ -89,7 +89,6 @@ export const StepsContainer = styled(Flex)`
 `;
 
 export const Step = styled.div<{$completed?: boolean; disabled?: boolean;}>`
-  cursor: pointer;
   margin: 0 auto;
   display: flex;
   height: 4rem;
@@ -106,7 +105,7 @@ export const Step = styled.div<{$completed?: boolean; disabled?: boolean;}>`
 export const StepsLine = styled.div`
   background: white; 
   height: 1px;
-  width: 80%;
+  width: 75%;
   position: absolute;
 
   @media(max-width: 768px) {
@@ -187,6 +186,18 @@ export const InfoCard = styled(Flex)`
   height: fit-content;
   align-items: center;
   row-gap: 0.5rem;
+`;
+
+export const LandingPageInputContainer = styled(Flex)`
+  height: fit-content;
+  justify-content: center;
+  align-items: center;
+  column-gap: 2rem;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    row-gap: 2rem;
+  }
 `;
 
 export const InfoHeading = styled.div`

@@ -18,14 +18,14 @@ export const CODECS: Record<Codec, CodecInfo> = {
         ffmpegLib: "libvpx"
     },
     // TODO: Probably just remove this
-    vp9: {
-        name: "VP9",
-        compressionRange: {
-            min: 1,
-            max: 63
-        },
-        ffmpegLib: "libvpx-vp9"
-    },
+    // vp9: {
+    //     name: "VP9",
+    //     compressionRange: {
+    //         min: 1,
+    //         max: 63
+    //     },
+    //     ffmpegLib: "libvpx-vp9"
+    // },
     windows: {
         name: "Windows Media Video",
         compressionRange: {
@@ -57,7 +57,8 @@ export const FORMATS: Record<Format, FormatInfo> = {
         name: "webm",
         extension: ".webm",
         type: "video/webm",
-        codecs: ["vp9", "vp8"]
+        // codecs: ["vp9", "vp8"]
+        codecs: ["vp8"]
     },
     avi: {
         name: 'AVI',
