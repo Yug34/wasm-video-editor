@@ -27,6 +27,12 @@ export const StyledLink = styled.a`
   }
 `;
 
+export const Separator = styled.span`
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
 export const VideoOverlay = styled.div<{$isUnplayable: boolean}>`
   position: relative;
   display: flex;
