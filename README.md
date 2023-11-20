@@ -4,6 +4,8 @@ A video editor that edits your videos on the client-side.
 
 Made with `FFmpeg.wasm`. And no other dependencies (except `styled-components`).
 
+Not mobile-responsive yet, will do it soon.
+
 ## Features:
 
 - Fully client-side video editing

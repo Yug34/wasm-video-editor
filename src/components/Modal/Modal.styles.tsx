@@ -155,7 +155,7 @@ export const RangeBar = styled.div`
 `;
 
 export const SliderContainer = styled.div`
-    width: 400px;
+    width: 600px;
     position: relative;
     height: 15px;
     text-align: left;

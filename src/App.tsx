@@ -19,6 +19,8 @@ export const StyledButton = styled.button`
   border: 1px solid white;
   border-radius: 12px;
   padding: 1rem;
+  min-width: 120px;
+  margin-top: 2rem;
   
   &:hover {
     background: #333333;

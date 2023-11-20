@@ -96,8 +96,8 @@ export const GrayscaleView = (props: GrayscaleViewProps) => {
 
     return (
         <>
-            <StyledButton onClick={() => addTransformation({type: "Grayscale"})}>Add Grayscale</StyledButton>
             <Command ffmpegCommand={`ffmpeg -i input.${videoFormat} -vf format=gray output.${videoFormat}`}/>
+            <StyledButton onClick={() => addTransformation({type: "Grayscale"})}>Add Grayscale</StyledButton>
         </>
     );
 };
@@ -112,8 +112,8 @@ export const MuteView = (props: MuteViewProps) => {
 
     return (
         <>
-            <StyledButton onClick={() => addTransformation({type: "Mute"})}>Mute Video</StyledButton>
             <Command ffmpegCommand={`ffmpeg -i input.${videoFormat} -vcodec copy -an output.${videoFormat}`}/>
+            <StyledButton onClick={() => addTransformation({type: "Mute"})}>Mute Video</StyledButton>
         </>
     )
 }
@@ -163,7 +163,7 @@ export const TrimView = (props: TrimViewProps) => {
                     <Styles.RangeBar id="range" style={{left: `${trimFromPercent + (trimFromPercent / 100)}%`, right: `${100 - trimToPercent}%`}}/>
                     <Styles.Thumb style={{left: `calc(${trimFromPercent - 1}% + ${14 * (100 - trimFromPercent)/100}px)`}}/>
                     <Styles.Thumb style={{left: `calc(${trimToPercent}% + ${14 * (100 - trimToPercent)/100}px)`}}/>
-                    <Styles.Thumb style={{left: `calc(${trimThumbnailPercent - 0.5}% + ${14 * (100 - trimThumbnailPercent)/100}px)`}}/>
+                    <Styles.Thumb style={{left: `calc(${trimThumbnailPercent - 0.5}% + ${14 * (100 - trimThumbnailPercent)/100}px)`, background: "red"}}/>
                     <div className="sign" style={{left: `calc(${trimFromPercent}% + ${14 * (100 - trimFromPercent)/100}px)`, top: "-31px"}}>
                         <span id="value">{videoDuration.toShortStringAtPercent(trimFromPercent)}</span>
                     </div>
