@@ -11,6 +11,7 @@ export type FormatInfo = {
     extension: string;
     type: string;
     codecs: Codec[];
+    isPlayable: boolean;
 }
 
 export type TransformationTypes = "Convert" | "Grayscale" | "Trim" | "Mute";

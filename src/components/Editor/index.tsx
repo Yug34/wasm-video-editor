@@ -6,7 +6,7 @@ import {CheckSVG, Flex, GitHubSVG} from "../common";
 import Modal from "../Modal";
 import { Codec, Format, Transformation, VideoDuration } from "../../types";
 import { CODECS } from "../../constants";
-import {VideoDurationWrapper} from '../../utils';
+import {isVideoBrowserCompatible, VideoDurationWrapper} from '../../utils';
 import * as Styles from "./Editor.Styles";
 
 // TODO: Maybe just process everything as MP4, then convert back to original/other formats
@@ -140,7 +140,7 @@ const Editor = () => {
         const ffmpeg = ffmpegRef.current;
         await ffmpeg.exec(`-i input.${fromFormat ?? videoFormat} -threads 4 -strict -2 -c:v ${CODECS[toCodec].ffmpegLib} input.${toFormat}`.split(" "));
 
-        if (toFormat === "wmv" || toFormat === "avi") {
+        if (isVideoBrowserCompatible(toFormat)) {
             setIsUnplayable(true);
         } else {
             setIsUnplayable(false);
@@ -217,7 +217,14 @@ const Editor = () => {
         return (
             <Styles.VideoOverlay $isUnplayable={isUnplayable}>
                 <video ref={videoRef} controls src={sourceVideoURL!} />
-                {isUnplayable && <div style={{position: "absolute"}}>Unplayable</div>}
+                {isUnplayable && (
+                    <>
+                        <div>
+                            <p>.{videoFormat} videos are unplayable on the browser. Although, your video was edited successfully.</p>
+                            <p>Click on the download button to download your video!</p>
+                        </div>
+                    </>
+                )}
             </Styles.VideoOverlay>
         );
     };

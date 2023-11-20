@@ -51,32 +51,37 @@ export const FORMATS: Record<Format, FormatInfo> = {
         name: 'MP4',
         extension: '.mp4',
         type: 'video/mp4',
-        codecs: ['h264', 'mpeg4']
+        codecs: ['h264', 'mpeg4'],
+        isPlayable: true
     },
     webm: {
         name: "webm",
         extension: ".webm",
         type: "video/webm",
         // codecs: ["vp9", "vp8"]
-        codecs: ["vp8"]
+        codecs: ["vp8"],
+        isPlayable: true
     },
     avi: {
         name: 'AVI',
         extension: '.avi',
         type: 'video/avi',
-        codecs: ["h264", "mpeg4"]
+        codecs: ["h264", "mpeg4"],
+        isPlayable: false
     },
     mov: {
         name: 'MOV',
         extension: '.mov',
         type: 'video/mov',
-        codecs: ['h264', 'mpeg4']
+        codecs: ['h264', 'mpeg4'],
+        isPlayable: true
     },
     wmv: {
         name: 'WMV',
         extension: '.wmv',
         type: 'video/wmv',
-        codecs: ['windows']
+        codecs: ['windows'],
+        isPlayable: false
     }
 }
 

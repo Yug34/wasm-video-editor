@@ -43,6 +43,17 @@ export const VideoOverlay = styled.div<{$isUnplayable: boolean}>`
   padding: 20px;
   border: ${(props) => props.$isUnplayable ? "1px solid white" : "none"};
   border-radius: 1rem;
+  
+  div {
+    position: absolute;
+    background: transparent;
+  }
+  
+  div > p {
+    width: 100%;
+    text-align: center;
+    background: transparent;
+  }
 
   @media (max-width: 1024px) {
     width: 100%;

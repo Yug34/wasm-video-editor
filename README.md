@@ -6,6 +6,8 @@ Made with `FFmpeg.wasm`. And no other dependencies (except `styled-components`).
 
 Not mobile-responsive yet, will do it soon.
 
+Do note that the formats `.wmv` and `.avi` are not playable by browsers. So the editor does work, but won't be able to display the result.
+
 ## Features:
 
 - Fully client-side video editing
