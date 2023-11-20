@@ -110,12 +110,14 @@ const Modal = ({ videoDuration, isModalOpen, setIsModalOpen, transformations, se
             case "Convert":
                 return (
                     <ModalView.ConvertVideoView
-                        videoFormat={videoFormat}
-                        videoConvertFormat={videoConvertFormat}
-                        videoConvertCodec={videoConvertCodec}
-                        addTransformation={addTransformation}
-                        setVideoConvertCodec={setVideoConvertCodec}
-                        setVideoConvertFormat={setVideoConvertFormat}
+                        {...{
+                            videoFormat,
+                            videoConvertFormat,
+                            videoConvertCodec,
+                            addTransformation,
+                            setVideoConvertCodec,
+                            setVideoConvertFormat
+                        }}
                     />
                 );
             case "Grayscale":
@@ -125,19 +127,21 @@ const Modal = ({ videoDuration, isModalOpen, setIsModalOpen, transformations, se
             case "Trim":
                 return (
                     <ModalView.TrimView
-                        sourceVideoURL={sourceVideoURL}
-                        videoDuration={videoDuration}
-                        trimFromPercent={trimFromPercent}
-                        trimToPercent={trimToPercent}
-                        thumbnailVideoRef={thumbnailVideoRef}
-                        trimThumbnailPercent={trimThumbnailPercent}
-                        inputRefFrom={inputRefFrom}
-                        inputRefTo={inputRefTo}
-                        inputRefThumbnail={inputRefThumbnail}
-                        addTrimTransformation={addTrimTransformation}
-                        handleTrimFromChange={handleTrimFromChange}
-                        handleTrimToChange={handleTrimToChange}
-                        handleTrimThumbChange={handleTrimThumbChange}
+                        {...{
+                            sourceVideoURL,
+                            videoDuration,
+                            trimFromPercent,
+                            trimToPercent,
+                            thumbnailVideoRef,
+                            trimThumbnailPercent,
+                            inputRefFrom,
+                            inputRefTo,
+                            inputRefThumbnail,
+                            addTrimTransformation,
+                            handleTrimFromChange,
+                            handleTrimToChange,
+                            handleTrimThumbChange,
+                        }}
                     />
                 );
         }

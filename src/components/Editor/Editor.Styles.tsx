@@ -13,6 +13,26 @@ export const StyledLabel = styled.label`
   }
 `;
 
+export const StyledLink = styled.a`
+  text-decoration: none !important;
+  text-underline: none !important;
+  color: white;
+  cursor: pointer;
+  border: 1px solid white;
+  border-radius: 12px;
+  padding: 1rem;
+
+  &:hover {
+    background: #333333;
+  }
+`;
+
+export const Separator = styled.span`
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
 export const VideoOverlay = styled.div<{$isUnplayable: boolean}>`
   position: relative;
   display: flex;

@@ -307,10 +307,14 @@ const Editor = () => {
             ) : (
                 <Styles.HeadingContainer>
                     <h1>Hey 👋,</h1>
-                    <h3>
+                    <h3>g
                         Welcome to the video-editor where <i>your files are not uploaded anywhere!</i> ✨
                     </h3>
                     <Styles.LandingPageInputContainer>
+                        <Styles.StyledLink href={"https://github.com/Yug34/wasm-video-editor/raw/master/public/bunnymp4.mp4"} rel={"noreferrer"}>
+                            Download a sample video
+                        </Styles.StyledLink>
+                        <Styles.Separator>|</Styles.Separator>
                         <Styles.StyledLabel htmlFor="file-upload" className="custom-file-upload">{video ? "Loading ffmpeg" : "Add a video to start"}</Styles.StyledLabel>
                         <input
                             style={{display: "none"}} id="file-upload" type="file" ref={fileInputRef}
