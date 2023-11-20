@@ -151,16 +151,13 @@ const Editor = () => {
     }
 
     const grayscale = async (format: Format) => {
-        console.log("grayscale")
         const ffmpeg = ffmpegRef.current;
 
         if (format === "webm") {
             await transcode("mp4", "h264");
             await ffmpeg.exec(`-i input.mp4 -vf format=gray output.mp4`.split(" "));
             await ffmpeg.deleteFile("input.mp4");
-            console.log(await ffmpeg.listDir("."));
             await ffmpeg.rename("output.mp4", "input.mp4");
-            console.log(await ffmpeg.listDir("."));
             await transcode(format, "vp8", "mp4");
         } else {
             await ffmpeg.exec(`-i input.${format} -vf format=gray output.${format}`.split(" "));
@@ -169,14 +166,12 @@ const Editor = () => {
     }
 
     const mute = async (format: Format) => {
-        console.log("mute")
         const ffmpeg = ffmpegRef.current;
         await ffmpeg.exec(`-i input.${format} -vcodec copy -an output.${format}`.split(" "));
         await ffmpeg.rename(`output.${format}`, `input.${format}`);
     }
 
     const trim = async (format: Format, from: VideoDuration, to: VideoDuration) => {
-        console.log("trim")
         const startTimestamp = VideoDurationWrapper.fromVideoDuration(from).toString();
 
         // WHAT? Why do I need to subtract twice for webms? This makes no sense.
