@@ -4,6 +4,8 @@ import {FORMAT_NAMES, FORMATS} from "../../../constants";
 import {StyledButton} from "../../../App";
 import React, {useState} from "react";
 import {VideoDurationWrapper} from "../../../utils";
+import {ConvertSelect, ConvertSelectContainer, ConvertSelectDescription} from "../Modal.styles";
+import {Flex} from "../../common";
 
 interface ConvertVideoViewProps {
     videoFormat: Format;
@@ -30,25 +32,34 @@ export const ConvertVideoView = (props: ConvertVideoViewProps) => {
                 Convert video from
                 <Styles.CodeContainer>.{videoFormat}</Styles.CodeContainer>
                 to:
-                <select
-                    value={videoConvertFormat}
-                    onChange={e => {setVideoConvertFormat(e.target.value as Format)}}
-                >
-                    {FORMAT_NAMES.filter(format => format !== videoFormat).map(format => (
-                        <option key={format} value={format}>.{format}</option>
-                    ))}
-                </select>
-                <select
-                    value={videoConvertCodec}
-                    onChange={e => {setVideoConvertCodec(e.target.value as Codec)}}
-                >
-                    {FORMATS[videoConvertFormat].codecs.map(codec => (
-                        <option key={codec} value={codec}>{codec}</option>
-                    ))}
-                </select>
+                <Styles.ConvertSelectContainer>
+                    <Styles.ConvertSelectDescription>
+                        <div>Format</div>
+                        <Styles.ConvertSelect
+                            value={videoConvertFormat}
+                            onChange={e => {setVideoConvertFormat(e.target.value as Format)}}
+                        >
+                            {FORMAT_NAMES.filter(format => format !== videoFormat).map(format => (
+                                <option key={format} value={format}>.{format}</option>
+                            ))}
+                        </Styles.ConvertSelect>
+                    </Styles.ConvertSelectDescription>
+
+                    <Styles.ConvertSelectDescription>
+                        <div>Codec</div>
+                        <Styles.ConvertSelect
+                            value={videoConvertCodec}
+                            onChange={e => {setVideoConvertCodec(e.target.value as Codec)}}
+                        >
+                            {FORMATS[videoConvertFormat].codecs.map(codec => (
+                                <option key={codec} value={codec}>{codec}</option>
+                            ))}
+                        </Styles.ConvertSelect>
+                    </Styles.ConvertSelectDescription>
+                </Styles.ConvertSelectContainer>
             </div>
 
-            <StyledButton onClick={() => addTransformation({type: "Convert", transcode: {to: videoConvertFormat, codec: videoConvertCodec}})}>Convert</StyledButton>
+            <StyledButton onClick={() => addTransformation({type: "Convert", transcode: {to: videoConvertFormat, codec: videoConvertCodec}})}>Add Conversion</StyledButton>
         </>
     );
 };
@@ -194,7 +205,7 @@ export const TrimView = (props: TrimViewProps) => {
                 />
             </Styles.SliderContainer>
 
-            <StyledButton onClick={addTrimTransformation}>Trim</StyledButton>
+            <StyledButton onClick={addTrimTransformation}>Done</StyledButton>
         </>
     );
 };

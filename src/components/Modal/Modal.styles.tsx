@@ -256,7 +256,7 @@ export const SliderInput = styled.input`
         pointer-events: all;
         width: 12px;
         height: 28px;
-        border-radius: 0px;
+        border-radius: 0;
         border: 0 none;
         background: red;
         cursor: pointer;
@@ -266,7 +266,7 @@ export const SliderInput = styled.input`
         pointer-events: all;
         width: 12px;
         height: 28px;
-        border-radius: 0px;
+        border-radius: 0;
         border: 0 none;
         background: red;
         cursor: pointer;
@@ -276,7 +276,7 @@ export const SliderInput = styled.input`
         pointer-events: all;
         width: 12px;
         height: 28px;
-        border-radius: 0px;
+        border-radius: 0;
         border: 0 none;
         background: red;
         -webkit-appearance: none;
@@ -298,32 +298,28 @@ export const SliderInput = styled.input`
     }
 `;
 
-export const LoaderContainer = styled(Flex)`
-  position: absolute;
-  opacity: 0.6;
+export const ConvertSelect = styled.select`
+  border: 1px solid #999999;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  width: 100%;
+  
+  outline: none;
+  
+  &:focus {
+    border: 1px solid white;
+  }
+`;
+export const ConvertSelectContainer = styled.div`
+  display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  margin-top: 2rem;
+  row-gap: 1rem;
 `;
 
-export const Loader = styled.span`
-  width: 48px;
-  height: 48px;
-  border: 5px solid #FFF;
-  border-bottom-color: transparent;
-  border-radius: 50%;
-  display: inline-block;
-  box-sizing: border-box;
-  animation: rotation 1s linear infinite;
-
-  @keyframes rotation {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
+export const ConvertSelectDescription = styled(Flex)`
+  column-gap: 1rem;
+  align-items: center;
 `;
 
 export const TrimVideoContainer = styled.div`
