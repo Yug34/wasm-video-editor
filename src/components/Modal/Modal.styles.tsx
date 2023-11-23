@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import {Flex} from "../common";
+import {px2vw} from "../../utils";
 
 export const ModalContainer = styled(Flex)`
   flex-direction: column;
@@ -24,6 +25,10 @@ export const ModalContentContainer = styled(Flex)`
   border-radius: 12px;
   border: 1px solid white;
   padding: 2rem;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
 export const ModalView = styled(Flex)`
@@ -78,10 +83,21 @@ export const ModalCloseCTA = styled.button`
 
 export const TransformationsContainer = styled(Flex)`
   flex-direction: column;
-  width: 400px;
+  width: clamp(300px, ${px2vw(400)}, 400px);
   border-right: 1px solid white;
   border-radius: 1rem;
-  box-shadow: -10px 0px 5px 0px rgba(255,255,255,0.15) inset;
+  box-shadow: -10px 0 5px 0 rgba(255,255,255,0.15) inset;
+  
+  @media (max-width: 768px) {
+    margin-top: 4rem;
+    border-bottom: 1px solid white;
+    border-right: none;
+    box-shadow: 0 -10px 5px 0 rgba(255,255,255,0.15) inset;
+    height: fit-content;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+  }
 `;
 
 export const TransformationOption = styled.div<{$selected: boolean; $isFirst: boolean;}>`
@@ -101,7 +117,15 @@ export const TransformationOption = styled.div<{$selected: boolean; $isFirst: bo
 
   &:hover {
     background: ${(props) => props.$selected ? "#999999" : "#333333"};
-    // color: ${(props) => props.$selected ? "black" : "white"};
+  }
+
+  @media (max-width: 768px) {
+    height: 40px;
+    width: 100%;
+    justify-content: center;
+    border-radius: 0; // reset
+    border-top-left-radius: ${(props) => props.$isFirst ? "1rem" : "0"};
+    border-bottom-left-radius: ${(props) => props.$isFirst ? "1rem" : "0"};
   }
 `;
 
@@ -118,28 +142,15 @@ export const RemoveTransformationCTA = styled.div<{$selected: boolean;}>`
   }
 `;
 
-export const Arrow = () => (
-    <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 16 16" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-        <path fillRule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
-    </svg>
-);
-
-export const TransformationMenuOptions = styled.div`
-  background: inherit;
-  display: flex;
-  column-gap: 12px;
-  align-items: center;
-  justify-content: center;
-  
-  svg {
-    background: inherit;
-  }
-`;
-
 export const Line = styled.div`
   width: 100%;
   height: 1px;
   background: white;
+
+  @media (max-width: 768px) {
+    height: 100%;
+    width: 1px;
+  }
 `;
 
 export const EmptyBar = styled.div`
@@ -155,7 +166,7 @@ export const RangeBar = styled.div`
 `;
 
 export const SliderContainer = styled.div`
-    width: 600px;
+    width: 100%;
     position: relative;
     height: 15px;
     text-align: left;

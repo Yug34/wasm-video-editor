@@ -314,7 +314,7 @@ const Editor = () => {
             ) : (
                 <Styles.HeadingContainer>
                     <h1>Hey 👋,</h1>
-                    <h3>g
+                    <h3>
                         Welcome to the video-editor where <i>your files are not uploaded anywhere!</i> ✨
                     </h3>
                     <Styles.LandingPageInputContainer>
