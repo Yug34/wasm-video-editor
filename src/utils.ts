@@ -1,5 +1,5 @@
-import {Format, VideoDuration} from "./types";
-import {FORMATS} from "./constants";
+import { Format, VideoDuration } from "./types";
+import { FORMATS } from "./constants";
 
 export class VideoDurationWrapper {
     constructor(public hours: number, public minutes: number, public seconds: number) {}
@@ -86,7 +86,7 @@ export class VideoDurationWrapper {
 
 export const roundFloat = (num: number) => (Math.round(num * 100) / 100).toFixed(2);
 
-export const isVideoBrowserCompatible = (videoFormat: Format): boolean => {
+export const isVideoFormatBrowserCompatible = (videoFormat: Format): boolean => {
     return FORMATS[videoFormat].isPlayable;
 }
 

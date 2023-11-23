@@ -100,7 +100,7 @@ export const TransformationsContainer = styled(Flex)`
   }
 `;
 
-export const TransformationOption = styled.div<{$selected: boolean; $isFirst: boolean;}>`
+export const TransformationOption = styled.div<{$selected: boolean; $isFirst: boolean; $isLast: boolean;}>`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -126,6 +126,9 @@ export const TransformationOption = styled.div<{$selected: boolean; $isFirst: bo
     border-radius: 0; // reset
     border-top-left-radius: ${(props) => props.$isFirst ? "1rem" : "0"};
     border-bottom-left-radius: ${(props) => props.$isFirst ? "1rem" : "0"};
+
+    border-top-right-radius: ${(props) => props.$isLast ? "1rem" : "0"};
+    border-bottom-right-radius: ${(props) => props.$isLast ? "1rem" : "0"};
   }
 `;
 
@@ -142,7 +145,7 @@ export const RemoveTransformationCTA = styled.div<{$selected: boolean;}>`
   }
 `;
 
-export const Line = styled.div`
+export const Line = styled.div<{$isLast: boolean;}>`
   width: 100%;
   height: 1px;
   background: white;
@@ -150,6 +153,7 @@ export const Line = styled.div`
   @media (max-width: 768px) {
     height: 100%;
     width: 1px;
+     display: ${(props) => props.$isLast ? "none" : "block"};
   }
 `;
 

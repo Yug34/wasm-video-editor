@@ -11,7 +11,7 @@ interface ConvertVideoViewProps {
     setVideoConvertFormat: React.Dispatch<React.SetStateAction<Format>>;
     setVideoConvertCodec: React.Dispatch<React.SetStateAction<Codec>>;
     videoConvertCodec: Codec;
-    addTransformation(transformation: Transformation): void
+    addTransformation(transformation: Transformation): void;
 }
 
 export const ConvertVideoView = (props: ConvertVideoViewProps) => {

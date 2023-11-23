@@ -6,7 +6,7 @@ import {CheckSVG, Flex, GitHubSVG} from "../common";
 import Modal from "../Modal";
 import { Codec, Format, Transformation, VideoDuration } from "../../types";
 import { CODECS } from "../../constants";
-import {isVideoBrowserCompatible, VideoDurationWrapper} from '../../utils';
+import { isVideoFormatBrowserCompatible, VideoDurationWrapper } from '../../utils';
 import * as Styles from "./Editor.Styles";
 
 // TODO: Maybe just process everything as MP4, then convert back to original/other formats
@@ -57,18 +57,17 @@ const Editor = () => {
     const [isDownloaded, setIsDownloaded] = useState<boolean>(false);
 
     const downloadVideo = () => {
-        var link = document.createElement("a");
+        const link = document.createElement("a");
         link.download = `output.${videoFormat}`;
         link.target = "_blank";
 
         link.href = sourceVideoURL!;
         document.body.appendChild(link);
         link.click();
-
         document.body.removeChild(link);
 
         setIsDownloaded(true);
-    }
+    };
 
     useEffect(() => {
         load();
@@ -140,11 +139,7 @@ const Editor = () => {
         const ffmpeg = ffmpegRef.current;
         await ffmpeg.exec(`-i input.${fromFormat ?? videoFormat} -threads 4 -strict -2 -c:v ${CODECS[toCodec].ffmpegLib} input.${toFormat}`.split(" "));
 
-        if (isVideoBrowserCompatible(toFormat)) {
-            setIsUnplayable(true);
-        } else {
-            setIsUnplayable(false);
-        }
+        setIsUnplayable(isVideoFormatBrowserCompatible(toFormat));
 
         await ffmpeg.deleteFile(`input.${fromFormat ?? videoFormat}`);
         setVideoFormat(toFormat);
@@ -153,6 +148,8 @@ const Editor = () => {
     const grayscale = async (format: Format) => {
         const ffmpeg = ffmpegRef.current;
 
+        // WebM weirdness. Does not work on FFmpeg itself.
+        // Converting WebM to MP4, applying filter, then converting back:
         if (format === "webm") {
             await transcode("mp4", "h264");
             await ffmpeg.exec(`-i input.mp4 -vf format=gray output.mp4`.split(" "));
@@ -174,7 +171,8 @@ const Editor = () => {
     const trim = async (format: Format, from: VideoDuration, to: VideoDuration) => {
         const startTimestamp = VideoDurationWrapper.fromVideoDuration(from).toString();
 
-        // WHAT? Why do I need to subtract twice for webms? This makes no sense.
+        // WHAT? More WebM weirdness.
+        // Why do I need to subtract twice for WebMs? This makes no sense.
         // TODO: Here's the official docs: https://trac.ffmpeg.org/wiki/Seeking
         const endTimeStamp = format === "webm" ? VideoDurationWrapper.subtract(VideoDurationWrapper.subtract(to, from), from).toString() : VideoDurationWrapper.subtract(to, from).toString();
 

@@ -158,7 +158,8 @@ const Modal = ({ videoDuration, isModalOpen, setIsModalOpen, transformations, se
                         <React.Fragment key={transformation}>
                             <Styles.TransformationOption
                                 $isFirst={index === 0}
-                                $selected={currentTransformation === transformation} 
+                                $isLast={index === TRANSFORMATION_NAMES.length - 1}
+                                $selected={currentTransformation === transformation}
                                 onClick={() => setCurrentTransformation(transformation)}
                             >
                                 {transformation}
@@ -171,7 +172,9 @@ const Modal = ({ videoDuration, isModalOpen, setIsModalOpen, transformations, se
                                     </Styles.RemoveTransformationCTA>
                                 )}
                             </Styles.TransformationOption>
-                            <Styles.Line/>
+                            <Styles.Line
+                                $isLast={index === TRANSFORMATION_NAMES.length - 1}
+                            />
                         </React.Fragment>
                     ))}
                 </Styles.TransformationsContainer>
