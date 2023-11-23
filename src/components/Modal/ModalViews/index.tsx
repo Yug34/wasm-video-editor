@@ -4,7 +4,6 @@ import {FORMAT_NAMES, FORMATS} from "../../../constants";
 import {StyledButton} from "../../../App";
 import React, {useState} from "react";
 import {VideoDurationWrapper} from "../../../utils";
-import {ConvertSelect, ConvertSelectContainer, ConvertSelectDescription} from "../Modal.styles";
 import {Flex} from "../../common";
 
 interface ConvertVideoViewProps {
@@ -166,44 +165,46 @@ export const TrimView = (props: TrimViewProps) => {
         <>
             <Styles.TrimVideoContainer>
                 <Styles.TrimVideoPreview controls ref={thumbnailVideoRef} src={sourceVideoURL+`#t=${videoDuration.toTimeStampAtPercent(trimFromPercent)},${videoDuration.toTimeStampAtPercent(trimToPercent)}`} />
+
+                <Styles.SliderContainer>
+                    <Styles.Slider>
+                        {/* Note: 14px is the width of the Thumbs. Hence, the seemingly arbitrary 14s. */}
+                        <Styles.EmptyBar style={{width: `${trimFromPercent + 1}%`, left: "0"}}/>
+                        <Styles.EmptyBar style={{width: `${100 - trimToPercent}%`, right: "0", top: "-1px"}}/>
+                        <Styles.RangeBar id="range" style={{left: `${trimFromPercent - 1 + ((100 - trimFromPercent) / 100)}%`, right: `${100 - trimToPercent}%`}}/>
+                        <Styles.Thumb style={{left: `calc(${trimFromPercent}% + ${14 * (100 - trimFromPercent)/100}px)`}}/>
+                        <Styles.Thumb style={{left: `calc(${trimToPercent}% + ${14 * (100 - trimToPercent)/100}px)`}}/>
+                        <Styles.Thumb style={{left: `calc(${trimThumbnailPercent - 0.5}% + ${14 * (100 - trimThumbnailPercent)/100}px)`, background: "red"}}/>
+                        <div className="sign" style={{left: `calc(${trimFromPercent}% + ${14 * (100 - trimFromPercent)/100}px)`, top: "-31px"}}>
+                            <span id="value">{videoDuration.toShortStringAtPercent(trimFromPercent)}</span>
+                        </div>
+                        <div className="sign" style={{left: `calc(${trimToPercent}% + ${14 * (100 - trimToPercent)/100}px)`, top: "28px"}}>
+                            <span id="value">{videoDuration.toShortStringAtPercent(trimToPercent)}</span>
+                        </div>
+                        <div className="sign" style={{left: `calc(${trimThumbnailPercent}% + ${14 * (100 - trimThumbnailPercent)/100}px)`, top: "28px"}}>
+                            <span id="value">{videoDuration.toShortStringAtPercent(trimThumbnailPercent)}</span>
+                        </div>
+                    </Styles.Slider>
+
+                    <Styles.SliderInput
+                        type="range" max="100" min="0" step=".01"
+                        ref={inputRefFrom} value={trimFromPercent}
+                        onChange={handleTrimFromChange}
+                    />
+
+                    <Styles.SliderInput
+                        type="range" max="100" min="0" step=".01"
+                        ref={inputRefTo} value={trimToPercent}
+                        onChange={handleTrimToChange}
+                    />
+
+                    <Styles.SliderInput
+                        type="range" max="100" min="0" step=".01"
+                        ref={inputRefThumbnail} value={trimThumbnailPercent}
+                        onChange={handleTrimThumbChange}
+                    />
+                </Styles.SliderContainer>
             </Styles.TrimVideoContainer>
-            <Styles.SliderContainer>
-                <Styles.Slider>
-                    <Styles.EmptyBar style={{width: `${trimFromPercent + 1}%`, left: "0"}}/>
-                    <Styles.EmptyBar style={{width: `${100 - trimToPercent}%`, right: "0", top: "-1px"}}/>
-                    <Styles.RangeBar id="range" style={{left: `${trimFromPercent + (trimFromPercent / 100)}%`, right: `${100 - trimToPercent}%`}}/>
-                    <Styles.Thumb style={{left: `calc(${trimFromPercent - 1}% + ${14 * (100 - trimFromPercent)/100}px)`}}/>
-                    <Styles.Thumb style={{left: `calc(${trimToPercent}% + ${14 * (100 - trimToPercent)/100}px)`}}/>
-                    <Styles.Thumb style={{left: `calc(${trimThumbnailPercent - 0.5}% + ${14 * (100 - trimThumbnailPercent)/100}px)`, background: "red"}}/>
-                    <div className="sign" style={{left: `calc(${trimFromPercent}% + ${14 * (100 - trimFromPercent)/100}px)`, top: "-31px"}}>
-                        <span id="value">{videoDuration.toShortStringAtPercent(trimFromPercent)}</span>
-                    </div>
-                    <div className="sign" style={{left: `calc(${trimToPercent}% + ${14 * (100 - trimToPercent)/100}px)`, top: "28px"}}>
-                        <span id="value">{videoDuration.toShortStringAtPercent(trimToPercent)}</span>
-                    </div>
-                    <div className="sign" style={{left: `calc(${trimThumbnailPercent}% + ${14 * (100 - trimThumbnailPercent)/100}px)`, top: "28px"}}>
-                        <span id="value">{videoDuration.toShortStringAtPercent(trimThumbnailPercent)}</span>
-                    </div>
-                </Styles.Slider>
-
-                <Styles.SliderInput
-                    type="range" max="100" min="0" step=".01"
-                    ref={inputRefFrom} value={trimFromPercent}
-                    onChange={handleTrimFromChange}
-                />
-
-                <Styles.SliderInput
-                    type="range" max="100" min="0" step=".01"
-                    ref={inputRefTo} value={trimToPercent}
-                    onChange={handleTrimToChange}
-                />
-
-                <Styles.SliderInput
-                    type="range" max="100" min="0" step=".01"
-                    ref={inputRefThumbnail} value={trimThumbnailPercent}
-                    onChange={handleTrimThumbChange}
-                />
-            </Styles.SliderContainer>
 
             <StyledButton onClick={addTrimTransformation}>Done</StyledButton>
         </>

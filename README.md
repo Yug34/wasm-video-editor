@@ -4,7 +4,7 @@ A video editor that edits your videos on the client-side.
 
 Made with `FFmpeg.wasm`. And no other dependencies (except `styled-components`).
 
-Not mobile-responsive yet, will do it soon.
+Boilerplate generated with `create-react-app`.
 
 > [!NOTE]
 > The formats `.wmv` and `.avi` are not playable by browsers. So the editor does work, but won't be able to display the result.

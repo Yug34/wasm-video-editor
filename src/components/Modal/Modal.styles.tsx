@@ -36,7 +36,7 @@ export const ModalView = styled(Flex)`
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 4rem 2rem;
+  padding: 1rem;
 `;
 
 export const CommandHLine = styled.span`
@@ -322,12 +322,11 @@ export const ConvertSelectDescription = styled(Flex)`
   align-items: center;
 `;
 
-export const TrimVideoContainer = styled.div`
-  border: 1px solid white;
+export const TrimVideoContainer = styled(Flex)`
   margin-bottom: 2rem;
-  
-  width: 100%;
-  height: auto;
+  width: auto;
+  row-gap: 2rem;
+  flex-direction: column;
 `;
 
 export const TrimVideoPreview = styled.video`
