@@ -1,4 +1,4 @@
-import {Codec, CodecInfo, Format, FormatInfo, TransformationTypes} from "./types";
+import {Codec, CodecInfo, Format, FormatInfo, TransformationTypes} from "../types";
 
 export const CODECS: Record<Codec, CodecInfo> = {
     h264: {

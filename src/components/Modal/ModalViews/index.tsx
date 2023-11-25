@@ -4,7 +4,6 @@ import {FORMAT_NAMES, FORMATS} from "../../../constants";
 import {StyledButton} from "../../../App";
 import React, {useState} from "react";
 import {VideoDurationWrapper} from "../../../utils";
-import {Flex} from "../../common";
 
 interface ConvertVideoViewProps {
     videoFormat: Format;

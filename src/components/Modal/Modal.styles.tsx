@@ -327,6 +327,9 @@ export const TrimVideoContainer = styled(Flex)`
   width: auto;
   row-gap: 2rem;
   flex-direction: column;
+  
+  max-width: 80%;
+  max-height: 80%;
 `;
 
 export const TrimVideoPreview = styled.video`

@@ -1,6 +1,12 @@
 import { Format, VideoDuration } from "./types";
 import { FORMATS } from "./constants";
 
+declare const __type: unique symbol;
+
+export type Nominal<Identifier, Type> = Type & {
+    readonly [__type]: Identifier;
+};
+
 export class VideoDurationWrapper {
     constructor(public hours: number, public minutes: number, public seconds: number) {}
 
@@ -48,19 +54,25 @@ export class VideoDurationWrapper {
         }
     }
 
+    truncatedSeconds(ss: string): string {
+        const truncatedSS = parseInt(ss.toString().split(".")[0]);
+        return truncatedSS < 10 ? `0${truncatedSS}` : `${truncatedSS}`;
+    }
+
     toShortString(): string {
         const hh = this.hours < 10 ? `0${this.hours}` : `${this.hours}`;
         const mm = this.minutes < 10 ? `0${this.minutes}` : `${this.minutes}`;
         const ss = this.seconds < 10 ? `0${this.seconds}` : `${this.seconds}`;
+        const roundedSS = this.truncatedSeconds(ss);
 
         if (hh === "00") {
             if (mm === "00") {
                 return `${roundFloat(parseFloat(ss))}s`
             } else {
-                return `${mm}:${ss}`
+                return `${mm}:${roundedSS}`
             }
         } else {
-            return `${hh}:${mm}:${ss}`
+            return `${hh}:${mm}:${roundedSS}`
         }
     }
 

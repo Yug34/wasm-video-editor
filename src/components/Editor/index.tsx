@@ -9,10 +9,7 @@ import { CODECS } from "../../constants";
 import { isVideoFormatBrowserCompatible, VideoDurationWrapper } from '../../utils';
 import * as Styles from "./Editor.Styles";
 
-// TODO: Maybe just process everything as MP4, then convert back to original/other formats
-// TODO: There's an ffmpeg.load error
-
-// NOTE: order should be trim -> compress -> grayscale/filters -> whatever (and then finally convert
+// TODO: order should be trim -> compress -> grayscale/filters -> whatever (and then finally convert
 
 interface StepProps {
     completed: boolean;

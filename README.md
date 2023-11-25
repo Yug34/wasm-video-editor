@@ -7,7 +7,7 @@ Made with `FFmpeg.wasm`. And no other dependencies (except `styled-components`).
 Boilerplate generated with `create-react-app`.
 
 > [!NOTE]
-> The formats `.wmv` and `.avi` are not playable by browsers. So the editor does work, but won't be able to display the result.
+> The formats `.wmv` and `.avi` are not playable by browsers. So the editor does work, but won't be able to display the result. You can still download the results of the process as normal.
 
 ## Features:
 
