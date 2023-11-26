@@ -38,7 +38,8 @@ export const VideoOverlay = styled.div<{$isUnplayable: boolean}>`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  height: 90%;
+  max-height: 90%;
   margin: 0 auto;
   padding: 20px;
   border: ${(props) => props.$isUnplayable ? "1px solid white" : "none"};
@@ -105,11 +106,10 @@ export const TransformationsContainer = styled(Flex)`
 `;
 
 export const StepsContainer = styled(Flex)`
-  margin-top: auto;
   justify-content: center;
   align-items: center;
   position: relative;
-  height: 20px;
+  height: 60px;
 
   @media(max-width: 768px) {
     flex-direction: column;

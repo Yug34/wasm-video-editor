@@ -11,7 +11,7 @@ const Layout = styled.div`
   width: 100vw;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
+  overflow-x: hidden;
 `;
 
 export const StyledButton = styled.button`

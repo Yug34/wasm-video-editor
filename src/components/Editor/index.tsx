@@ -14,11 +14,11 @@ import * as Styles from "./Editor.Styles";
 interface StepProps {
     completed: boolean;
     enabled?: boolean;
-    clickHandler?(): void;
     text?: string;
     completedText: string;
     svg: ReactElement;
     completedSVG?: ReactElement;
+    clickHandler?(): void;
 }
 const Step = ({completed, clickHandler = () => {}, completedText, text = "", svg, completedSVG = <CheckSVG/>, enabled}: StepProps) => {
     return (
@@ -242,7 +242,7 @@ const Editor = () => {
                             <Flex style={{ flexDirection: "column" }}>
                                 <VideoPlayer isUnplayable={isUnplayable} />
                                 <Styles.StepsContainer>
-                                    <Step 
+                                    <Step
                                         completed={transformations.length > 0} clickHandler={openModal}
                                         completedText='Added a Transformation' text='Add a Transformation'
                                         svg={
@@ -273,6 +273,15 @@ const Editor = () => {
                                     />
                                     <Styles.StepsLine />
                                 </Styles.StepsContainer>
+                                <Styles.MessageContainer>
+                                    <p>Ffmpeg Logs:</p>
+                                    <p ref={messageRef}></p>
+                                    <Styles.IconsContainer>
+                                        <a href={"https://github.com/Yug34/wasm-video-editor"} aria-label={"Link to Project"} target={"_blank"} rel={"noreferrer"}>
+                                            <GitHubSVG />
+                                        </a>
+                                    </Styles.IconsContainer>
+                                </Styles.MessageContainer>
                             </Flex>
                             <Styles.TransformationsContainer>
                                 {transformations.length === 0 ? (
@@ -295,15 +304,6 @@ const Editor = () => {
                                 )}
                             </Styles.TransformationsContainer>
                         </Flex>
-                        <Styles.MessageContainer>
-                            <p>Ffmpeg Logs:</p>
-                            <p ref={messageRef}></p>
-                            <Styles.IconsContainer>
-                                <a href={"https://github.com/Yug34/wasm-video-editor"} aria-label={"Link to Project"} target={"_blank"} rel={"noreferrer"}>
-                                    <GitHubSVG />
-                                </a>
-                            </Styles.IconsContainer>
-                        </Styles.MessageContainer>
                     </Flex>
                 </React.Fragment>
             ) : (
