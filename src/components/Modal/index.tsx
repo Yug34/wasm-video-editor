@@ -120,6 +120,10 @@ const Modal = ({ videoDuration, isModalOpen, setIsModalOpen, transformations, se
                         }}
                     />
                 );
+            case "Compress":
+                return (
+                    <ModalView.CompressView/>
+                )
             case "Grayscale":
                 return <ModalView.GrayscaleView addTransformation={addTransformation} videoFormat={videoFormat} />
             case "Mute":

@@ -210,3 +210,8 @@ export const TrimView = (props: TrimViewProps) => {
     );
 };
 
+export const CompressView = () => {
+    return (
+        <div>compress</div>
+    )
+}

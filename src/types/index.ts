@@ -14,7 +14,7 @@ export type FormatInfo = {
     isPlayable: boolean;
 }
 
-export type TransformationTypes = "Convert" | "Grayscale" | "Trim" | "Mute";
+export type TransformationTypes = "Convert" | "Grayscale" | "Trim" | "Mute" | "Compress";
 
 export type Transformation = {
     type: TransformationTypes;

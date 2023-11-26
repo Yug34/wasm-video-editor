@@ -4,12 +4,10 @@ import { StyledButton } from "../../App";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import {CheckSVG, Flex, GitHubSVG} from "../common";
 import Modal from "../Modal";
-import { Codec, Format, Transformation, VideoDuration } from "../../types";
+import {Codec, Format, Transformation, TransformationTypes, VideoDuration} from "../../types";
 import { CODECS } from "../../constants";
 import { isVideoFormatBrowserCompatible, VideoDurationWrapper } from '../../utils';
 import * as Styles from "./Editor.Styles";
-
-// TODO: order should be trim -> compress -> grayscale/filters -> whatever (and then finally convert
 
 interface StepProps {
     completed: boolean;
@@ -184,7 +182,20 @@ const Editor = () => {
 
         const format = hasTranscode ? transcodeSteps[0].transcode!.to : videoFormat;
 
-        for (const transformation of transformations) {
+        // Order transformations as Trim -> (the rest of them) to save compute time.
+        const transformationOrder: Record<TransformationTypes, number> = {
+            "Trim": 1,
+            "Compress": 2,
+            "Mute": 3,
+            "Convert": 4,
+            "Grayscale": 5,
+        };
+
+        const sortedTransformations = transformations.sort((a, b) => {
+            return transformationOrder[a.type] - transformationOrder[b.type];
+        });
+
+        for (const transformation of sortedTransformations) {
             switch (transformation.type) {
                 case "Convert":
                     await transcode(transformation.transcode!.to, transformation.transcode!.codec);
