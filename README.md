@@ -1,3 +1,6 @@
+> [!NOTE]
+> This project is now outdated, visit [the updated version](https://github.com/Yug34/video-editor/) of this project.
+
 # Client-sided video editor
 
 A video editor that edits your videos on the client-side.
